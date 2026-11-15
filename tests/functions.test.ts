@@ -21,14 +21,14 @@ test("sequence: columns for a window of rows", () => {
 });
 
 test("fetch_items: token comes from the secret, then the environment", () => {
-  const saved = process.env.STARTER_API_TOKEN;
-  process.env.STARTER_API_TOKEN = "from-env";
+  const saved = process.env.LAUNCHDARKLY_API_TOKEN;
+  process.env.LAUNCHDARKLY_API_TOKEN = "from-env";
   try {
-    expect(resolveToken({ my_secret: { type: "starter_api", token: "from-secret" } })).toBe("from-secret");
+    expect(resolveToken({ my_secret: { type: "launchdarkly_api", token: "from-secret" } })).toBe("from-secret");
     expect(resolveToken({})).toBe("from-env");
   } finally {
-    if (saved === undefined) delete process.env.STARTER_API_TOKEN;
-    else process.env.STARTER_API_TOKEN = saved;
+    if (saved === undefined) delete process.env.LAUNCHDARKLY_API_TOKEN;
+    else process.env.LAUNCHDARKLY_API_TOKEN = saved;
   }
 });
 

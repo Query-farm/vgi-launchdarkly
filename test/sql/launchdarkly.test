@@ -1,148 +1,590 @@
 # name: test/sql/launchdarkly.test
-# description: SQL-level tests for the launchdarkly worker, run through DuckDB by ci/run-integration.sh
+# description: SQL tests for the launchdarkly worker against the strict LaunchDarkly replay server (test/mock_api/server.py)
 # group: [launchdarkly]
-# managed-by: vgi-starters (edit upstream in shared/, then run tools/render.py)
 
 require vgi
 
 require-env LAUNCHDARKLY_WORKER
 
-require-env LAUNCHDARKLY_MOCK_API
+require-env LAUNCHDARKLY_FIXTURE_URL
 
-require-env LAUNCHDARKLY_MOCK_API_AUTH
+# httpfs + json read the replay server's /__requests log to assert what was pushed down.
+statement ok
+LOAD httpfs;
+
+statement ok
+LOAD json;
 
 statement ok
 ATTACH 'launchdarkly' (TYPE vgi, LOCATION '{LAUNCHDARKLY_WORKER}');
 
-# ---------------------------------------------------------------- greet (scalar)
+# ---------------------------------------------------------------- secret errors
 
-query T
-SELECT launchdarkly.main.greet('Ada');
-----
-Hi, Ada!
-
-query T
-SELECT launchdarkly.main.greet('Ada', 'formal');
-----
-Good day, Ada.
-
-# NULL in, NULL out.
-query T
-SELECT launchdarkly.main.greet(NULL);
-----
-NULL
-
-# Works over a whole column, one result per row.
-query T
-SELECT launchdarkly.main.greet(name) FROM (VALUES ('Ada'), ('Grace'), (NULL)) AS t(name) ORDER BY ALL NULLS LAST;
-----
-Hi, Ada!
-Hi, Grace!
-NULL
-
-# `style` is constrained to 'casual' | 'formal' and checked when the query is bound.
-# (No expected message: each SDK words constraint errors its own way.)
 statement error
-SELECT launchdarkly.main.greet('Ada', 'loud');
+SELECT count(*) FROM launchdarkly.main.projects;
 ----
-<REGEX>:.*
+<REGEX>:.*no launchdarkly secret.*
 
-# ------------------------------------------------------ sequence_table (table fn)
+statement ok
+CREATE SECRET ld_bad (TYPE launchdarkly, ACCESS_TOKEN 'api-wrong', BASE_URL '{LAUNCHDARKLY_FIXTURE_URL}');
 
-query II
-SELECT n, squared FROM launchdarkly.main.sequence_table(4) ORDER BY n;
+statement error
+SELECT count(*) FROM launchdarkly.main.projects;
 ----
-0	0
-1	1
-2	4
-3	9
+<REGEX>:.*HTTP 401.*unauthorized.*
 
-# Named argument with a default.
+statement ok
+DROP SECRET ld_bad;
+
+statement ok
+CREATE SECRET ld_insecure (TYPE launchdarkly, ACCESS_TOKEN 'api-x', BASE_URL 'http://app.launchdarkly.com');
+
+statement error
+SELECT count(*) FROM launchdarkly.main.projects;
+----
+<REGEX>:.*https.*
+
+statement ok
+DROP SECRET ld_insecure;
+
+# The token is sent verbatim (no "Bearer"), with the pinned API version; the bad-token
+# request above was recorded as auth=bad.
 query I
-SELECT n FROM launchdarkly.main.sequence_table(3, step := 5) ORDER BY n;
+SELECT count(*) > 0 FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/projects') WHERE auth = 'bad';
+----
+true
+
+statement ok
+CREATE SECRET ld (TYPE launchdarkly, ACCESS_TOKEN 'api-test-token', BASE_URL '{LAUNCHDARKLY_FIXTURE_URL}');
+
+# --------------------------------------------------------------------- projects
+
+query TTT
+SELECT key, name, tags FROM launchdarkly.main.projects ORDER BY key;
+----
+default	Default	[web]
+mobile	Mobile App	[ios, android]
+
+query T
+SELECT key FROM launchdarkly.main.projects WHERE key IN ('mobile', 'nope') AND list_contains(tags, 'ios');
+----
+mobile
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/projects') WHERE query LIKE '%keys:%' AND query LIKE '%tags:ios%';
+----
+1
+
+# ----------------------------------------------------------------- environments
+
+query TTTTT
+SELECT project_key, key, client_side_id, critical, approvals_required FROM launchdarkly.main.environments() ORDER BY ALL;
+----
+default	production	6500000000000000000000a1	true	true
+default	staging	6500000000000000000000a2	false	false
+default	test	6500000000000000000000a3	false	false
+mobile	development	6500000000000000000000b2	false	false
+mobile	production	6500000000000000000000b1	true	false
+
+# The replay server returns apiKey / mobileKey like LaunchDarkly does; no column carries them.
+query I
+SELECT count(*) FROM (SELECT * FROM launchdarkly.main.environments()) t WHERE CAST(t AS VARCHAR) LIKE '%SECRET%';
 ----
 0
+
+query TT
+SELECT project_key, key FROM launchdarkly.main.environments(project_key := 'default') WHERE critical ORDER BY key;
+----
+default	production
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/projects/default/environments') WHERE query LIKE '%critical:true%';
+----
+1
+
+# ------------------------------------------------------------------------ flags
+
+query TTTTTIII
+SELECT project_key, environment_key, key, state, targeting_on, rule_count, target_count, fallthrough_variation FROM launchdarkly.main.flags() ORDER BY ALL;
+----
+default	production	api-rate-limit	live	true	0	0	1
+default	production	dark-mode	live	true	2	3	0
+default	production	new-checkout	live	true	1	0	NULL
+default	production	old-search	deprecated	true	0	0	0
+default	production	pricing-tier	live	false	1	0	0
+default	staging	api-rate-limit	live	true	0	0	0
+default	staging	dark-mode	live	true	1	0	0
+default	staging	new-checkout	live	true	0	0	0
+default	staging	old-search	deprecated	true	0	0	0
+default	staging	pricing-tier	live	true	0	0	0
+default	test	api-rate-limit	live	true	0	0	0
+default	test	dark-mode	live	false	0	0	0
+default	test	new-checkout	live	true	0	0	0
+default	test	old-search	deprecated	true	0	0	0
+default	test	pricing-tier	live	true	0	0	0
+mobile	development	onboarding-v2	live	true	0	0	0
+mobile	production	onboarding-v2	live	false	0	0	0
+
+# Rollouts, prerequisites and maintainers.
+query TTTTT
+SELECT fallthrough_rollout, prerequisites, maintainer_email, maintainer_team_key, site_url LIKE '%/default/production/features/new-checkout' FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production') WHERE key = 'new-checkout';
+----
+[{'variation': 0, 'weight': 10000}, {'variation': 1, 'weight': 90000}]	[{'key': dark-mode, 'variation': 0}]	grace@example.com	checkout-team	true
+
+# Variation values of any JSON type come back as text.
+query T
+SELECT [v.value FOR v IN variations] FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production') WHERE key = 'api-rate-limit';
+----
+[100, 1000, '{"burst":50,"rate":500}']
+
+# Archived flags are only returned when asked for (state:archived is pushed).
+query TT
+SELECT key, state FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production') WHERE archived;
+----
+legacy-banner	archived
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/flags/default') WHERE query LIKE '%state:archived%';
+----
+1
+
+# Tags and temporary push down into one filter= parameter.
+query T
+SELECT key FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production') WHERE list_contains(tags, 'ui') AND temporary = false;
+----
+dark-mode
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/flags/default') WHERE query LIKE '%"filter": "tags:ui,type:permanent"%' AND query LIKE '%"summary": "0"%';
+----
+1
+
+# Maintainer, client-side availability and creation date.
+query T
+SELECT key FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production') WHERE maintainer_id = 'm1ada0000000000000000001' AND client_side_using_environment_id ORDER BY key;
+----
+dark-mode
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/flags/default') WHERE query LIKE '%maintainerId:m1ada0000000000000000001,sdkAvailability:client%';
+----
+1
+
+query T
+SELECT key FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production') WHERE creation_date < TIMESTAMPTZ '2025-01-01 00:00:00+00' ORDER BY key;
+----
+old-search
+pricing-tier
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/flags/default') WHERE query LIKE '%creationDate:{\"before\":1735689600000}%';
+----
+1
+
+# A key equality becomes filter=query:<key>; the SDK keeps it exact.
+query T
+SELECT key FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production') WHERE key = 'dark-mode';
+----
+dark-mode
+
+# Multiple pages: the offset cursor carries across batches.
+query II
+SELECT count(*), count(DISTINCT key) FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'staging', page_size := 2);
+----
+5	5
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/flags/default') WHERE query LIKE '%"env": "staging"%' AND query LIKE '%"limit": "2"%';
+----
+3
+
+# Sort and evaluated_since_days pass through.
+query T
+SELECT list(key) FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production', sort := '-creationDate');
+----
+[new-checkout, api-rate-limit, dark-mode, pricing-tier, old-search]
+
+query I
+SELECT count(*) FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production', evaluated_since_days := 36500);
+----
 5
-10
-
-# Larger than one batch: the cursor must carry across process calls.
-query II
-SELECT count(*), max(n) FROM launchdarkly.main.sequence_table(25000);
-----
-25000	24999
 
 query I
-SELECT count(*) FROM launchdarkly.main.sequence_table(0);
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/flags/default') WHERE query LIKE '%evaluated:{\"after\":%filterEnv:production%';
 ----
-0
+1
 
-# count is constrained to [0, 1000000].
 statement error
-SELECT * FROM launchdarkly.main.sequence_table(-1);
+SELECT count(*) FROM launchdarkly.main.flags(sort := 'bogus');
 ----
 <REGEX>:.*
 
-# Named arguments are constrained too: step >= 1.
+# An explicit unknown project is a clear upstream error.
 statement error
-SELECT * FROM launchdarkly.main.sequence_table(3, step := 0);
+SELECT count(*) FROM launchdarkly.main.flags(project_key := 'nope', environment_key := 'production');
 ----
-<REGEX>:.*
+<REGEX>:.*HTTP 404.*
 
-# ------------------------------------------------- fetch_items (REST table fn)
-
-query IIT
-SELECT count(*), sum(id), min(name) FROM launchdarkly.main.fetch_items('{LAUNCHDARKLY_MOCK_API}', page_size := 4);
+# Environment pushdown across listed projects only asks the projects that have it.
+query TT
+SELECT project_key, key FROM launchdarkly.main.flags() WHERE environment_key = 'development';
 ----
-25	325	item-01
+mobile	onboarding-v2
+
+# ------------------------------------------------------------------- flag_rules
+
+query TIITTIITTTTT
+SELECT flag_key, rule_index, variation, rule_disabled, rollout, clause_index, rule_index, context_kind, attribute, op, negate, clause_values FROM launchdarkly.main.flag_rules(project_key := 'default', environment_key := 'production') ORDER BY flag_key, rule_index, clause_index;
+----
+dark-mode	0	0	false	NULL	0	0	user	segmentMatch	segmentMatch	false	[beta-testers]
+dark-mode	0	0	false	NULL	1	0	user	country	in	false	[US, CA]
+dark-mode	1	NULL	false	[{'variation': 0, 'weight': 25000}, {'variation': 1, 'weight': 75000}]	0	1	user	email	endsWith	false	[@example.com]
+new-checkout	0	0	true	NULL	0	0	user	segmentMatch	segmentMatch	false	[beta-testers, enterprise]
+pricing-tier	0	2	false	NULL	0	0	organization	plan	in	false	[enterprise]
+pricing-tier	0	2	false	NULL	1	0	organization	seats	greaterThan	false	[100]
+
+query TT
+SELECT DISTINCT flag_key, unnest(clause_values) AS segment FROM launchdarkly.main.flag_rules(project_key := 'default', environment_key := 'production') WHERE op = 'segmentMatch' ORDER BY ALL;
+----
+dark-mode	beta-testers
+new-checkout	beta-testers
+new-checkout	enterprise
+
+# ------------------------------------------------------------------ flag_status
+
+query TTT
+SELECT environment_key, flag_key, status FROM launchdarkly.main.flag_status(project_key := 'default') WHERE status IN ('launched', 'new') ORDER BY ALL;
+----
+production	api-rate-limit	launched
+production	old-search	launched
+staging	api-rate-limit	launched
+staging	new-checkout	new
+staging	old-search	launched
+test	new-checkout	new
+test	old-search	launched
+test	pricing-tier	new
+
+query TTT
+SELECT flag_key, last_requested = TIMESTAMPTZ '2026-11-14 11:59:00+00', default_value FROM launchdarkly.main.flag_status(project_key := 'default', environment_key := 'production') WHERE flag_key IN ('dark-mode', 'pricing-tier') ORDER BY flag_key;
+----
+dark-mode	true	false
+pricing-tier	false	basic
+
+# --------------------------------------------------------------------- segments
+
+query TTTTIIIT
+SELECT project_key, environment_key, key, unbounded, included_count, excluded_count, rule_count, included_keys FROM launchdarkly.main.segments() ORDER BY ALL;
+----
+default	production	beta-testers	false	4	1	1	NULL
+default	production	big-cohort	true	0	0	0	NULL
+default	production	enterprise	false	0	0	2	NULL
+default	staging	beta-testers	false	1	0	0	NULL
+mobile	production	ios-users	false	0	0	1	NULL
+
+query TTT
+SELECT key, included_keys, excluded_keys FROM launchdarkly.main.segments(project_key := 'default', environment_key := 'production', include_members := true) WHERE key IN ('beta-testers', 'enterprise') ORDER BY key;
+----
+beta-testers	[user-1, user-2, user-3, org-1]	[user-9]
+enterprise	[]	[]
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/segments/default/production') WHERE query LIKE '%includedKeys anyOf [\"beta-testers\",\"enterprise\"]%';
+----
+1
+
+query TT
+SELECT environment_key, key FROM launchdarkly.main.segments(project_key := 'default') WHERE unbounded ORDER BY ALL;
+----
+production	big-cohort
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/segments/default/staging') WHERE query LIKE '%unbounded equals true%';
+----
+1
 
 query TI
-SELECT category, count(*) FROM launchdarkly.main.fetch_items('{LAUNCHDARKLY_MOCK_API}') GROUP BY category ORDER BY category;
+SELECT key, rules[2].weight FROM launchdarkly.main.segments(project_key := 'default', environment_key := 'production', query := 'enterprise');
 ----
-hardware	8
-service	8
-software	9
+enterprise	50000
 
-# The harness runs LAUNCHDARKLY_MOCK_API with MOCK_API_FLAKY=1: every page answers
-# 429 + Retry-After once, so every query above also exercised the retry path.
+# ---------------------------------------------------------------- context_kinds
 
-# LAUNCHDARKLY_MOCK_API_AUTH requires a bearer token ('test-token'). Every language's
-# fetch_items must put the HTTP status code in its error message.
-statement error
-SELECT count(*) FROM launchdarkly.main.fetch_items('{LAUNCHDARKLY_MOCK_API_AUTH}');
+query TTT
+SELECT project_key, key, archived FROM launchdarkly.main.context_kinds() ORDER BY ALL;
 ----
-401
+default	device	true
+default	organization	false
+default	user	false
+mobile	user	false
 
-statement ok
-CREATE SECRET launchdarkly_api_test (TYPE launchdarkly_api, TOKEN 'test-token');
+# ---------------------------------------------------------------------- members
+
+query TTTTTT
+SELECT email, role, custom_roles, team_keys, mfa, pending_invite FROM launchdarkly.main.members ORDER BY email;
+----
+ada@example.com	admin	[]	[platform]	enabled	false
+alan@example.com	reader	[]	[]	disabled	true
+grace@example.com	writer	[release-manager]	[checkout-team]	enabled	false
+kat@example.com	owner	[]	[platform]	disabled	false
+radia@example.com	no_access	[read-only-prod]	[checkout-team]	enabled	false
+
+query T
+SELECT email FROM launchdarkly.main.members WHERE email IN ('ada@example.com', 'kat@example.com') AND list_contains(team_keys, 'platform') ORDER BY email;
+----
+ada@example.com
+kat@example.com
 
 query I
-SELECT count(*) FROM launchdarkly.main.fetch_items('{LAUNCHDARKLY_MOCK_API_AUTH}', page_size := 25);
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/members') WHERE query LIKE '%email:%ada@example.com%' AND query LIKE '%kat@example.com%,team:platform%';
 ----
-25
+1
 
-# Several pages: the token must survive between batches (over HTTP each batch is a
-# separate request, so a token kept only in memory is lost after page 1).
+# filter=role:writer is pushed; the SDK keeps the exact role.
+query T
+SELECT email FROM launchdarkly.main.members WHERE role = 'writer';
+----
+grace@example.com
+
+# ------------------------------------------------------------------------ teams
+
+# The first /api/v2/teams request answers 429 with X-Ratelimit-Reset; the scan waits and retries.
+query TIT
+SELECT key, member_count, custom_role_keys FROM launchdarkly.main.teams ORDER BY key;
+----
+checkout-team	2	[release-manager]
+empty-team	0	[]
+platform	2	[]
+
 query I
-SELECT count(*) FROM launchdarkly.main.fetch_items('{LAUNCHDARKLY_MOCK_API_AUTH}', page_size := 7);
+SELECT count(*) >= 2 FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/teams');
 ----
-25
+true
 
-statement ok
-DROP SECRET launchdarkly_api_test;
+# ----------------------------------------------------------------- custom roles
 
-# base_url must be http(s).
-statement error
-SELECT * FROM launchdarkly.main.fetch_items('ftp://example.com');
+# The first /api/v2/roles request answers 503; the client backs off and retries.
+query TII
+SELECT key, statement_count, assigned_members FROM launchdarkly.main.custom_roles ORDER BY key;
 ----
-<REGEX>:.*
+read-only-prod	1	1
+release-manager	2	1
 
-# page_size is a named argument constrained to [1, 1000].
-statement error
-SELECT * FROM launchdarkly.main.fetch_items('{LAUNCHDARKLY_MOCK_API}', page_size := 0);
+query TITTT
+SELECT role_key, statement_index, effect, actions, not_actions FROM launchdarkly.main.custom_role_statements ORDER BY ALL;
 ----
-<REGEX>:.*
+read-only-prod	0	allow	NULL	[*]
+release-manager	0	allow	[updateOn, updateFallthrough]	NULL
+release-manager	1	deny	[deleteFlag]	NULL
 
-statement error
-SELECT * FROM launchdarkly.main.fetch_items('{LAUNCHDARKLY_MOCK_API}', page_size := 5000);
+# Who can toggle production flags: members joined to their custom roles' statements.
+query TT
+SELECT DISTINCT m.email, s.role_key FROM launchdarkly.main.members m JOIN launchdarkly.main.custom_role_statements s ON list_contains(m.custom_roles, s.role_key) WHERE s.effect = 'allow' AND list_contains(s.actions, 'updateOn') ORDER BY ALL;
 ----
-<REGEX>:.*
+grace@example.com	release-manager
+
+# ------------------------------------------------------------ approval_requests
+
+query TTTTTTT
+SELECT id, review_status, status, project_key, environment_key, resource_kind, resource_key FROM launchdarkly.main.approval_requests ORDER BY id;
+----
+ap1	pending	pending	default	production	flag	new-checkout
+ap2	approved	completed	default	production	flag	dark-mode
+ap3	declined	pending	default	production	segment	enterprise
+ap4	pending	scheduled	mobile	production	flag	onboarding-v2
+
+query T
+SELECT id FROM launchdarkly.main.approval_requests WHERE review_status = 'pending' AND resource_kind = 'flag' AND project_key = 'default';
+----
+ap1
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/approval-requests') WHERE query LIKE '%reviewStatus anyOf [\"pending\"]%resourceKind equals flag%projectKey equals default%';
+----
+1
+
+query TT
+SELECT reviews[1].kind, reviews[1].comment FROM launchdarkly.main.approval_requests WHERE id = 'ap2';
+----
+approve	LGTM
+
+# ------------------------------------------------------------ scheduled_changes
+
+# No flag_key: every live flag x environment of the project is read.
+query TTTTT
+SELECT environment_key, flag_key, id, instruction_kinds, has_conflicts FROM launchdarkly.main.scheduled_changes(project_key := 'default') ORDER BY ALL;
+----
+production	new-checkout	sc1	[updateFallthroughVariationOrRollout]	false
+staging	dark-mode	sc2	[turnFlagOff, removeRule]	true
+
+query TT
+SELECT id, execution_date = TIMESTAMPTZ '2026-11-20 09:00:00+00' FROM launchdarkly.main.scheduled_changes(project_key := 'default', environment_key := 'production') WHERE flag_key = 'new-checkout';
+----
+sc1	true
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/projects/default/flags/new-checkout/environments/production/scheduled-changes');
+----
+2
+
+# ------------------------------------------------------------------ experiments
+
+query TTTTTT
+SELECT key, environment_key, iteration_status, flag_keys, primary_metric_key, metric_keys FROM launchdarkly.main.experiments() ORDER BY key;
+----
+checkout-conversion	production	running	[new-checkout]	checkout-completed	[checkout-completed, page-load-ms]
+pricing-test	production	stopped	[pricing-tier]	pricing-page-view	[pricing-page-view]
+
+query TT
+SELECT key, treatments[2].name FROM launchdarkly.main.experiments(project_key := 'default') WHERE iteration_status = 'running';
+----
+checkout-conversion	New checkout
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/projects/default/experiments') WHERE query LIKE '%status:running%';
+----
+1
+
+query T
+SELECT key FROM launchdarkly.main.experiments(project_key := 'default', lifecycle_state := 'active,archived') ORDER BY key;
+----
+checkout-conversion
+old-banner-test
+pricing-test
+
+# ---------------------------------------------------------------------- metrics
+
+query TTTTI
+SELECT key, kind, is_numeric, unit, percentile_value FROM launchdarkly.main.metrics() ORDER BY key;
+----
+checkout-completed	custom	false	NULL	NULL
+page-load-ms	custom	true	ms	95
+pricing-page-view	pageview	NULL	NULL	NULL
+
+query T
+SELECT key FROM launchdarkly.main.metrics(project_key := 'default') WHERE kind = 'custom' AND list_contains(tags, 'conversion');
+----
+checkout-completed
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/metrics/default') WHERE query LIKE '%eventKind equals custom,tags contains [\"conversion\"]%';
+----
+1
+
+# ------------------------------------------------------------ release_pipelines
+
+query TTT
+SELECT p.key, ph.name, ph.environment_keys FROM launchdarkly.main.release_pipelines(project_key := 'default') p, unnest(p.phases) AS u(ph) ORDER BY p.key, ph.idx;
+----
+hotfix	Production	[production]
+standard	Testing	[test, staging]
+standard	Production	[production]
+
+# -------------------------------------------------------------- code references
+
+query TTIT
+SELECT name, type, branch_count, branches FROM launchdarkly.main.code_ref_repositories ORDER BY name;
+----
+api-server	gitlab	1	[master]
+web-app	github	2	[main, feature/x]
+
+query TTTITT
+SELECT repository, branch, path, starting_line, project_key, flag_key FROM launchdarkly.main.code_references() ORDER BY ALL;
+----
+api-server	master	limits/rate.go	88	default	api-rate-limit
+api-server	master	mobile/onboard.go	3	mobile	onboarding-v2
+web-app	main	src/checkout/index.ts	5	default	new-checkout
+web-app	main	src/theme.ts	12	default	dark-mode
+web-app	main	src/theme.ts	40	default	dark-mode
+
+query TTI
+SELECT repository, path, starting_line FROM launchdarkly.main.code_references() WHERE flag_key = 'dark-mode' ORDER BY ALL;
+----
+web-app	src/theme.ts	12
+web-app	src/theme.ts	40
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/code-refs/repositories') WHERE query LIKE '%"flagKey": "dark-mode"%';
+----
+1
+
+# -------------------------------------------------------------------- audit_log
+
+# What changed in production right before the incident: spec + after/before are pushed.
+query TTTT
+SELECT id, actor, resource_key, title FROM launchdarkly.main.audit_log() WHERE resource_kind = 'flag' AND environment_key = 'production' AND date BETWEEN TIMESTAMPTZ '2026-11-14 09:00:00+00' AND TIMESTAMPTZ '2026-11-14 12:00:00+00' ORDER BY date DESC;
+----
+al01	kat@example.com	api-rate-limit	Katherine Johnson changed the default variation of API rate limit
+al02	grace@example.com	new-checkout	Grace Hopper updated the targeting rules of New checkout flow
+al03	ada@example.com	dark-mode	Ada Lovelace turned on Dark mode
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/auditlog') WHERE query LIKE '%"after": "1794646799999"%' AND query LIKE '%"before": "1794657600001"%' AND query LIKE '%"spec": "proj/*:env/production:flag/*"%';
+----
+1
+
+# Every entry over eight pages (seven follow the before cursor), with lookback_days := 0 = all history.
+query II
+SELECT count(*), count(DISTINCT id) FROM launchdarkly.main.audit_log(lookback_days := 0, page_size := 2);
+----
+15	15
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/auditlog') WHERE query LIKE '%"limit": "2"%' AND query LIKE '%"before"%';
+----
+7
+
+# Without a lower bound only the default 30-day lookback is read (al13 is from 2020).
+query T
+SELECT list(id ORDER BY id) FROM launchdarkly.main.audit_log() WHERE id IN ('al13', 'al14', 'al15');
+----
+[al14, al15]
+
+query TTTT
+SELECT id, member_name, actions, related_flag_key FROM launchdarkly.main.audit_log(lookback_days := 0) WHERE member_id = 'm2grace000000000000000002' AND resource_kind = 'segment' ORDER BY date;
+----
+al04	Grace Hopper	[updateIncluded]	dark-mode
+al15	Grace Hopper	[updateRules]	NULL
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/auditlog') WHERE query LIKE '%"member": "m2grace000000000000000002"%' AND query LIKE '%"spec": "proj/*:env/*:segment/*"%';
+----
+1
+
+query TTT
+SELECT id, actor, service_token FROM launchdarkly.main.audit_log(lookback_days := 0) WHERE token_id = 'tok1';
+----
+al05	ci-deployer	true
+
+query TTT
+SELECT id, delta, current_version FROM launchdarkly.main.audit_log(include_diff := true) WHERE date BETWEEN TIMESTAMPTZ '2026-11-14 10:00:00+00' AND TIMESTAMPTZ '2026-11-14 10:30:00+00';
+----
+al03	[{"op":"replace","path":"/environments/production/on","value":true}]	{"on":true}
+
+query TT
+SELECT id, title FROM launchdarkly.main.audit_log(q := 'checkout', lookback_days := 0) ORDER BY id;
+----
+al02	Grace Hopper updated the targeting rules of New checkout flow
+al06	Grace Hopper turned on New checkout flow
+
+# Account-level and project-level kinds build their own specifiers.
+query TT
+SELECT id, resource_key FROM launchdarkly.main.audit_log(lookback_days := 0) WHERE resource_kind = 'role';
+----
+al09	release-manager
+
+query T
+SELECT id FROM launchdarkly.main.audit_log(lookback_days := 0) WHERE resource_kind = 'environment' AND project_key = 'default';
+----
+al07
+
+query I
+SELECT count(*) FROM read_json('{LAUNCHDARKLY_FIXTURE_URL}/__requests?path=/api/v2/auditlog') WHERE query LIKE '%"spec": "role/*"%' OR query LIKE '%"spec": "proj/default:env/*"%';
+----
+2
+
+# An OR is not pushed: every entry is read and the SDK filters.
+query T
+SELECT id FROM launchdarkly.main.audit_log(lookback_days := 0) WHERE resource_kind = 'project' OR resource_kind = 'member' ORDER BY id;
+----
+al08
+al12

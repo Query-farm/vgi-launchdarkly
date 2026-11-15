@@ -1,58 +1,80 @@
 /**
- * Assemble the functions into the catalog DuckDB attaches.
- *
- * To add a function: write it (see `greet.ts` / `sequence.ts` /
- * `fetch_items.ts`), then add it to `FUNCTIONS` below.
+ * Assemble the `launchdarkly` catalog: the table functions, the account-wide
+ * collections as tables, and the `launchdarkly` secret type.
  */
 
-import type { CatalogDescriptor, VgiFunction } from "@query-farm/vgi";
-import { API_SECRET_TYPE, fetchItems } from "./fetch_items.ts";
-import { greet, greetWithStyle } from "./greet.ts";
-import { CATALOG_DOC_MD, CATALOG_NAME, CATALOG_TAGS, SCHEMA_DOC_MD, SCHEMA_TAGS, SOURCE_URL } from "./meta.ts";
-import { sequenceTable } from "./sequence.ts";
+import { type CatalogDescriptor, field, schema, utf8, type VgiFunction } from "@query-farm/vgi";
+import { SECRET_TYPE } from "./ld/client.ts";
+import { FUNCTIONS, TABLES } from "./ld/resources.ts";
+import { CATALOG_COMMENT, CATALOG_NAME, CATALOG_TAGS, SCHEMA_DOC_MD, SCHEMA_TAGS, SOURCE_URL } from "./meta.ts";
 
-export const FUNCTIONS: VgiFunction[] = [greet, greetWithStyle, sequenceTable, fetchItems];
+export { FUNCTIONS };
+
+const doc = (text: string) => new Map([["vgi_doc", text]]);
+
+/** CREATE SECRET (TYPE launchdarkly, ACCESS_TOKEN 'api-…', BASE_URL '…'). */
+export const LAUNCHDARKLY_SECRET_TYPE = {
+  name: SECRET_TYPE,
+  description: "A LaunchDarkly API access token or service token, plus the instance URL for EU / Federal accounts",
+  schema: schema(
+    [
+      field(
+        "access_token",
+        utf8(),
+        true,
+        new Map([
+          ["redact", "true"],
+          ["vgi_doc", "LaunchDarkly API access token or service token (Account settings > Authorization), e.g. api-…"],
+        ]),
+      ),
+      field(
+        "base_url",
+        utf8(),
+        true,
+        doc(
+          "Instance URL: https://app.launchdarkly.com (default), https://app.eu.launchdarkly.com (EU) or " +
+            "https://app.launchdarkly.us (Federal). http:// is accepted only for 127.0.0.1/localhost.",
+        ),
+      ),
+    ],
+    new Map([["vgi_doc_url", "https://launchdarkly.com/docs/home/account/api"]]),
+  ),
+};
 
 interface Example {
   description: string;
   sql: string;
 }
 
-/**
- * Publish each function's examples as `vgi.example_queries` (with descriptions).
- *
- * Overloads share one SQL name, so their examples are merged per name.
- * Returns every example, for the schema-level list.
- */
+/** Publish each function's examples as `vgi.example_queries`; return them all for the schema. */
 function stampExampleQueries(functions: VgiFunction[]): Example[] {
-  const byName = new Map<string, Example[]>();
+  const all: Example[] = [];
   for (const fn of functions) {
-    const bucket = byName.get(fn.meta.name) ?? [];
-    byName.set(fn.meta.name, bucket);
-    for (const ex of fn.meta.examples ?? []) {
-      if (!bucket.some((e) => e.sql === ex.sql)) bucket.push({ description: ex.description, sql: ex.sql });
-    }
+    const ex = (fn.meta.examples ?? []).map((e) => ({ description: e.description, sql: e.sql }));
+    fn.meta.tags = { ...fn.meta.tags, "vgi.example_queries": JSON.stringify(ex) };
+    all.push(...ex);
   }
-  for (const fn of functions) {
-    fn.meta.tags = { ...fn.meta.tags, "vgi.example_queries": JSON.stringify(byName.get(fn.meta.name)) };
-  }
-  return [...byName.values()].flat();
+  return all;
 }
 
-const ALL_EXAMPLES = stampExampleQueries(FUNCTIONS);
+const ALL_EXAMPLES = [
+  ...stampExampleQueries(FUNCTIONS),
+  ...TABLES.flatMap((t) => JSON.parse(t.tags?.["vgi.example_queries"] ?? "[]") as Example[]),
+];
 
 export const CATALOG: CatalogDescriptor = {
   name: CATALOG_NAME,
-  comment: CATALOG_DOC_MD,
+  comment: CATALOG_COMMENT,
   sourceUrl: SOURCE_URL,
   tags: CATALOG_TAGS,
-  secretTypes: [API_SECRET_TYPE],
+  secretTypes: [LAUNCHDARKLY_SECRET_TYPE],
   schemas: [
     {
       path: ["main"],
       comment: SCHEMA_DOC_MD,
       functions: FUNCTIONS,
-      tags: { ...SCHEMA_TAGS, "vgi.example_queries": JSON.stringify(ALL_EXAMPLES) },
+      tables: TABLES,
+      tags: { ...SCHEMA_TAGS, "vgi.example_queries": JSON.stringify(ALL_EXAMPLES.slice(0, 12)) },
     },
   ],
 };

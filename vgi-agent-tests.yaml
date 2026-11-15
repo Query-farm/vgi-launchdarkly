@@ -1,16 +1,76 @@
 # Private graders for the public vgi.agent_test_tasks in the worker's catalog metadata.
-# `vgi-lint lint --ai` runs an agent on each prompt and grades it with check_sql.
-# See https://github.com/Query-farm/vgi-lint-check (VGI920).
+# `vgi-lint lint --ai` runs an agent on each prompt and grades it (VGI920).
+#
+# Every launchdarkly function needs a `launchdarkly` secret pointing at a LaunchDarkly
+# account (the offline replay account in test/mock_api/server.py works too:
+# ACCESS_TOKEN 'api-test-token', BASE_URL 'http://127.0.0.1:<port>'). Flag, segment,
+# member and approval data are stable between the agent's run and the reference run, so
+# these tasks compare against a reference query.
 tasks:
-  - name: formal_greeting
-    reference_sql: SELECT launchdarkly.main.greet('Grace', 'formal') AS greeting
-  - name: sum_of_squares
-    reference_sql: SELECT sum(squared) AS total FROM launchdarkly.main.sequence_table(10)
-  - name: stepped_sequence
-    reference_sql: SELECT n FROM launchdarkly.main.sequence_table(4, step := 5) ORDER BY n
-  # Reads the public demo API (https://vgi-starter-api.query-farm.services/v1).
-  - name: items_per_category
+  - name: project_keys
+    reference_sql: SELECT key FROM launchdarkly.main.projects ORDER BY key
+  - name: prod_flags_on
+    reference_sql: >-
+      SELECT key FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production')
+      WHERE targeting_on ORDER BY key
+  - name: temporary_flag_count
+    reference_sql: >-
+      SELECT count(*) AS flags FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production')
+      WHERE temporary
+  - name: archived_flags
+    reference_sql: >-
+      SELECT key FROM launchdarkly.main.flags(project_key := 'default', environment_key := 'production')
+      WHERE archived ORDER BY key
+  - name: segment_targeting_flags
+    reference_sql: >-
+      SELECT DISTINCT flag_key FROM launchdarkly.main.flag_rules(project_key := 'default', environment_key := 'production')
+      WHERE op = 'segmentMatch' AND list_contains(clause_values, 'beta-testers') ORDER BY flag_key
+  - name: launched_flags
+    reference_sql: >-
+      SELECT flag_key FROM launchdarkly.main.flag_status(project_key := 'default', environment_key := 'production')
+      WHERE status = 'launched' ORDER BY flag_key
+  - name: big_segments
+    reference_sql: >-
+      SELECT key FROM launchdarkly.main.segments(project_key := 'default', environment_key := 'production')
+      WHERE unbounded ORDER BY key
+  - name: critical_envs
+    reference_sql: >-
+      SELECT project_key, key FROM launchdarkly.main.environments() WHERE critical ORDER BY project_key, key
+  - name: admins
+    reference_sql: SELECT email FROM launchdarkly.main.members WHERE role IN ('admin', 'owner') ORDER BY email
+  - name: pending_approvals
+    reference_sql: SELECT count(*) AS pending FROM launchdarkly.main.approval_requests WHERE review_status = 'pending'
+  - name: prod_changes_before_incident
     check_sql: >-
-      SELECT count(*) = 3 AND sum(items) = 25
-      FROM (SELECT category, count(*) AS items
-            FROM launchdarkly.main.fetch_items('https://vgi-starter-api.query-farm.services/v1') GROUP BY category)
+      SELECT count(*) = 3 FROM launchdarkly.main.audit_log()
+      WHERE resource_kind = 'flag' AND project_key = 'default' AND environment_key = 'production'
+        AND date BETWEEN TIMESTAMPTZ '2026-11-14 09:00:00+00' AND TIMESTAMPTZ '2026-11-14 12:00:00+00'
+  - name: running_experiments
+    reference_sql: >-
+      SELECT key FROM launchdarkly.main.experiments(project_key := 'default') WHERE iteration_status = 'running' ORDER BY key
+  - name: flag_code_refs
+    reference_sql: >-
+      SELECT DISTINCT repository, path FROM launchdarkly.main.code_references(flag_key := 'dark-mode') ORDER BY ALL
+  - name: repo_branches
+    reference_sql: SELECT name, branch_count FROM launchdarkly.main.code_ref_repositories ORDER BY name
+  - name: archived_context_kinds
+    reference_sql: >-
+      SELECT key FROM launchdarkly.main.context_kinds(project_key := 'default') WHERE archived ORDER BY key
+  - name: deny_statements
+    reference_sql: >-
+      SELECT DISTINCT role_key FROM launchdarkly.main.custom_role_statements WHERE effect = 'deny' ORDER BY role_key
+  - name: unused_roles
+    reference_sql: SELECT count(*) AS roles FROM launchdarkly.main.custom_roles WHERE assigned_members > 0
+  - name: numeric_metrics
+    reference_sql: >-
+      SELECT key, unit FROM launchdarkly.main.metrics(project_key := 'default') WHERE is_numeric ORDER BY key
+  - name: pipeline_phases
+    reference_sql: >-
+      SELECT ph.name FROM launchdarkly.main.release_pipelines(project_key := 'default') p, unnest(p.phases) AS u(ph)
+      WHERE p.key = 'standard' ORDER BY ph.idx
+  - name: upcoming_changes
+    reference_sql: >-
+      SELECT flag_key, environment_key, execution_date FROM launchdarkly.main.scheduled_changes(project_key := 'default')
+      ORDER BY execution_date
+  - name: largest_team
+    reference_sql: SELECT key FROM launchdarkly.main.teams ORDER BY member_count DESC, key LIMIT 1

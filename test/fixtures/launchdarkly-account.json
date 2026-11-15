@@ -1,0 +1,3707 @@
+{
+ "members": [
+  {
+   "_id": "m1ada0000000000000000001",
+   "email": "ada@example.com",
+   "firstName": "Ada",
+   "lastName": "Lovelace",
+   "role": "admin",
+   "customRoles": [],
+   "teams": [
+    {
+     "key": "platform",
+     "name": "Platform",
+     "customRoleKeys": []
+    }
+   ],
+   "mfa": "enabled",
+   "_pendingInvite": false,
+   "_verified": true,
+   "_lastSeen": 1794643200000,
+   "creationDate": 1704844800000,
+   "_links": {
+    "self": {
+     "href": "/api/v2/members/m1ada0000000000000000001",
+     "type": "application/json"
+    }
+   }
+  },
+  {
+   "_id": "m2grace000000000000000002",
+   "email": "grace@example.com",
+   "firstName": "Grace",
+   "lastName": "Hopper",
+   "role": "writer",
+   "customRoles": [
+    "release-manager"
+   ],
+   "teams": [
+    {
+     "key": "checkout-team",
+     "name": "Checkout",
+     "customRoleKeys": [
+      "release-manager"
+     ]
+    }
+   ],
+   "mfa": "enabled",
+   "_pendingInvite": false,
+   "_verified": true,
+   "_lastSeen": 1794652200000,
+   "creationDate": 1706745600000,
+   "_links": {
+    "self": {
+     "href": "/api/v2/members/m2grace000000000000000002",
+     "type": "application/json"
+    }
+   }
+  },
+  {
+   "_id": "m3alan0000000000000000003",
+   "email": "alan@example.com",
+   "firstName": "Alan",
+   "lastName": "Turing",
+   "role": "reader",
+   "customRoles": [],
+   "teams": [],
+   "mfa": "disabled",
+   "_pendingInvite": true,
+   "_verified": false,
+   "_lastSeen": 0,
+   "creationDate": 1790812800000,
+   "_links": {
+    "self": {
+     "href": "/api/v2/members/m3alan0000000000000000003",
+     "type": "application/json"
+    }
+   }
+  },
+  {
+   "_id": "m4kat00000000000000000004",
+   "email": "kat@example.com",
+   "firstName": "Katherine",
+   "lastName": "Johnson",
+   "role": "owner",
+   "customRoles": [],
+   "teams": [
+    {
+     "key": "platform",
+     "name": "Platform",
+     "customRoleKeys": []
+    }
+   ],
+   "mfa": "disabled",
+   "_pendingInvite": false,
+   "_verified": true,
+   "_lastSeen": 1793491200000,
+   "creationDate": 1685577600000,
+   "_links": {
+    "self": {
+     "href": "/api/v2/members/m4kat00000000000000000004",
+     "type": "application/json"
+    }
+   }
+  },
+  {
+   "_id": "m5radia000000000000000005",
+   "email": "radia@example.com",
+   "firstName": "Radia",
+   "lastName": "Perlman",
+   "role": "no_access",
+   "customRoles": [
+    "read-only-prod"
+   ],
+   "teams": [
+    {
+     "key": "checkout-team",
+     "name": "Checkout",
+     "customRoleKeys": [
+      "release-manager"
+     ]
+    }
+   ],
+   "mfa": "enabled",
+   "_pendingInvite": false,
+   "_verified": true,
+   "_lastSeen": 1794528000000,
+   "creationDate": 1740787200000,
+   "_links": {
+    "self": {
+     "href": "/api/v2/members/m5radia000000000000000005",
+     "type": "application/json"
+    }
+   }
+  }
+ ],
+ "projects": [
+  {
+   "_id": "p1default000000000000001",
+   "key": "default",
+   "name": "Default",
+   "tags": [
+    "web"
+   ],
+   "includeInSnippetByDefault": true,
+   "defaultClientSideAvailability": {
+    "usingMobileKey": false,
+    "usingEnvironmentId": true
+   },
+   "defaultReleasePipelineKey": "standard",
+   "createdOn": 1685577600000,
+   "environments": [
+    {
+     "_links": {
+      "self": {
+       "href": "x"
+      }
+     },
+     "_id": "6500000000000000000000a1",
+     "key": "production",
+     "name": "Production",
+     "apiKey": "sdk-SECRET-6500000000000000000000a1",
+     "mobileKey": "mob-SECRET-6500000000000000000000a1",
+     "color": "417505",
+     "defaultTtl": 0,
+     "secureMode": true,
+     "defaultTrackEvents": false,
+     "requireComments": true,
+     "confirmChanges": true,
+     "tags": [
+      "prod"
+     ],
+     "critical": true,
+     "approvalSettings": {
+      "required": true,
+      "bypassApprovalsForPendingChanges": false,
+      "minNumApprovals": 2,
+      "canReviewOwnRequest": false,
+      "canApplyDeclinedChanges": false,
+      "serviceKind": "launchdarkly",
+      "serviceConfig": {},
+      "requiredApprovalTags": []
+     }
+    },
+    {
+     "_links": {
+      "self": {
+       "href": "x"
+      }
+     },
+     "_id": "6500000000000000000000a2",
+     "key": "staging",
+     "name": "Staging",
+     "apiKey": "sdk-SECRET-6500000000000000000000a2",
+     "mobileKey": "mob-SECRET-6500000000000000000000a2",
+     "color": "c0a000",
+     "defaultTtl": 0,
+     "secureMode": false,
+     "defaultTrackEvents": false,
+     "requireComments": false,
+     "confirmChanges": false,
+     "tags": [
+      "pre-prod"
+     ],
+     "critical": false,
+     "approvalSettings": {
+      "required": false,
+      "bypassApprovalsForPendingChanges": false,
+      "minNumApprovals": 1,
+      "canReviewOwnRequest": false,
+      "canApplyDeclinedChanges": false,
+      "serviceKind": "launchdarkly",
+      "serviceConfig": {},
+      "requiredApprovalTags": []
+     }
+    },
+    {
+     "_links": {
+      "self": {
+       "href": "x"
+      }
+     },
+     "_id": "6500000000000000000000a3",
+     "key": "test",
+     "name": "Test",
+     "apiKey": "sdk-SECRET-6500000000000000000000a3",
+     "mobileKey": "mob-SECRET-6500000000000000000000a3",
+     "color": "7e8c9a",
+     "defaultTtl": 0,
+     "secureMode": false,
+     "defaultTrackEvents": false,
+     "requireComments": false,
+     "confirmChanges": false,
+     "tags": [],
+     "critical": false,
+     "approvalSettings": {
+      "required": false,
+      "bypassApprovalsForPendingChanges": false,
+      "minNumApprovals": 1,
+      "canReviewOwnRequest": false,
+      "canApplyDeclinedChanges": false,
+      "serviceKind": "launchdarkly",
+      "serviceConfig": {},
+      "requiredApprovalTags": []
+     }
+    }
+   ]
+  },
+  {
+   "_id": "p2mobile0000000000000002",
+   "key": "mobile",
+   "name": "Mobile App",
+   "tags": [
+    "ios",
+    "android"
+   ],
+   "includeInSnippetByDefault": false,
+   "defaultClientSideAvailability": {
+    "usingMobileKey": true,
+    "usingEnvironmentId": false
+   },
+   "createdOn": 1714521600000,
+   "environments": [
+    {
+     "_links": {
+      "self": {
+       "href": "x"
+      }
+     },
+     "_id": "6500000000000000000000b1",
+     "key": "production",
+     "name": "Production",
+     "apiKey": "sdk-SECRET-6500000000000000000000b1",
+     "mobileKey": "mob-SECRET-6500000000000000000000b1",
+     "color": "417505",
+     "defaultTtl": 0,
+     "secureMode": true,
+     "defaultTrackEvents": false,
+     "requireComments": true,
+     "confirmChanges": true,
+     "tags": [
+      "prod"
+     ],
+     "critical": true,
+     "approvalSettings": {
+      "required": false,
+      "bypassApprovalsForPendingChanges": false,
+      "minNumApprovals": 1,
+      "canReviewOwnRequest": false,
+      "canApplyDeclinedChanges": false,
+      "serviceKind": "launchdarkly",
+      "serviceConfig": {},
+      "requiredApprovalTags": []
+     }
+    },
+    {
+     "_links": {
+      "self": {
+       "href": "x"
+      }
+     },
+     "_id": "6500000000000000000000b2",
+     "key": "development",
+     "name": "Development",
+     "apiKey": "sdk-SECRET-6500000000000000000000b2",
+     "mobileKey": "mob-SECRET-6500000000000000000000b2",
+     "color": "3d6ebc",
+     "defaultTtl": 0,
+     "secureMode": false,
+     "defaultTrackEvents": false,
+     "requireComments": false,
+     "confirmChanges": false,
+     "tags": [],
+     "critical": false,
+     "approvalSettings": {
+      "required": false,
+      "bypassApprovalsForPendingChanges": false,
+      "minNumApprovals": 1,
+      "canReviewOwnRequest": false,
+      "canApplyDeclinedChanges": false,
+      "serviceKind": "launchdarkly",
+      "serviceConfig": {},
+      "requiredApprovalTags": []
+     }
+    }
+   ]
+  }
+ ],
+ "flags": {
+  "default": [
+   {
+    "name": "Dark mode",
+    "kind": "boolean",
+    "description": "",
+    "key": "dark-mode",
+    "_version": 19,
+    "creationDate": 1736899200000,
+    "includeInSnippet": true,
+    "clientSideAvailability": {
+     "usingEnvironmentId": true,
+     "usingMobileKey": false
+    },
+    "variations": [
+     {
+      "_id": "v-true",
+      "value": true,
+      "name": "On"
+     },
+     {
+      "_id": "v-false",
+      "value": false,
+      "name": "Off"
+     }
+    ],
+    "temporary": false,
+    "tags": [
+     "ui",
+     "beta"
+    ],
+    "_links": {
+     "self": {
+      "href": "/api/v2/flags/default/dark-mode",
+      "type": "application/json"
+     }
+    },
+    "maintainerId": "m1ada0000000000000000001",
+    "_maintainer": {
+     "_links": {
+      "self": {
+       "href": "/api/v2/members/m1ada0000000000000000001",
+       "type": "application/json"
+      }
+     },
+     "_id": "m1ada0000000000000000001",
+     "firstName": "Ada",
+     "lastName": "Lovelace",
+     "role": "admin",
+     "email": "ada@example.com"
+    },
+    "experiments": {
+     "baselineIdx": 0,
+     "items": []
+    },
+    "customProperties": {
+     "jira": {
+      "name": "Jira",
+      "value": [
+       "WEB-12"
+      ]
+     }
+    },
+    "archived": false,
+    "deprecated": false,
+    "defaults": {
+     "onVariation": 0,
+     "offVariation": 1
+    },
+    "environments": {
+     "production": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1794651300000,
+      "version": 12,
+      "targets": [
+       {
+        "values": [
+         "user-1",
+         "user-2"
+        ],
+        "variation": 0,
+        "contextKind": "user"
+       }
+      ],
+      "contextTargets": [
+       {
+        "values": [
+         "org-9"
+        ],
+        "variation": 0,
+        "contextKind": "organization"
+       }
+      ],
+      "rules": [
+       {
+        "_id": "r-dm-1",
+        "variation": 0,
+        "clauses": [
+         {
+          "_id": "c-dm-1",
+          "attribute": "segmentMatch",
+          "op": "segmentMatch",
+          "values": [
+           "beta-testers"
+          ],
+          "contextKind": "user",
+          "negate": false
+         },
+         {
+          "_id": "c-dm-2",
+          "attribute": "country",
+          "op": "in",
+          "values": [
+           "US",
+           "CA"
+          ],
+          "contextKind": "user",
+          "negate": false
+         }
+        ],
+        "trackEvents": false,
+        "description": "Beta testers in North America"
+       },
+       {
+        "_id": "r-dm-2",
+        "rollout": {
+         "variations": [
+          {
+           "variation": 0,
+           "weight": 25000
+          },
+          {
+           "variation": 1,
+           "weight": 75000
+          }
+         ],
+         "bucketBy": "key",
+         "contextKind": "user"
+        },
+        "clauses": [
+         {
+          "_id": "c-dm-3",
+          "attribute": "email",
+          "op": "endsWith",
+          "values": [
+           "@example.com"
+          ],
+          "contextKind": "user",
+          "negate": false
+         }
+        ],
+        "trackEvents": true,
+        "description": "Employees 25%"
+       }
+      ],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/production/features/dark-mode",
+       "type": "text/html"
+      },
+      "_environmentName": "Production",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 2,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "staging": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1794268800000,
+      "version": 5,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [
+       {
+        "_id": "r-dm-s1",
+        "variation": 0,
+        "clauses": [
+         {
+          "_id": "c-dm-s1",
+          "attribute": "segmentMatch",
+          "op": "segmentMatch",
+          "values": [
+           "beta-testers"
+          ],
+          "contextKind": "user",
+          "negate": false
+         }
+        ],
+        "trackEvents": false,
+        "description": "Beta"
+       }
+      ],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/staging/features/dark-mode",
+       "type": "text/html"
+      },
+      "_environmentName": "Staging",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 1,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "test": {
+      "on": false,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1790812800000,
+      "version": 2,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/test/features/dark-mode",
+       "type": "text/html"
+      },
+      "_environmentName": "Test",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     }
+    }
+   },
+   {
+    "name": "New checkout flow",
+    "kind": "boolean",
+    "description": "",
+    "key": "new-checkout",
+    "_version": 1,
+    "creationDate": 1789862400000,
+    "includeInSnippet": true,
+    "clientSideAvailability": {
+     "usingEnvironmentId": true,
+     "usingMobileKey": false
+    },
+    "variations": [
+     {
+      "_id": "v-true",
+      "value": true,
+      "name": "On"
+     },
+     {
+      "_id": "v-false",
+      "value": false,
+      "name": "Off"
+     }
+    ],
+    "temporary": true,
+    "tags": [
+     "checkout"
+    ],
+    "_links": {
+     "self": {
+      "href": "/api/v2/flags/default/new-checkout",
+      "type": "application/json"
+     }
+    },
+    "maintainerId": "m2grace000000000000000002",
+    "_maintainer": {
+     "_links": {
+      "self": {
+       "href": "/api/v2/members/m2grace000000000000000002",
+       "type": "application/json"
+      }
+     },
+     "_id": "m2grace000000000000000002",
+     "firstName": "Grace",
+     "lastName": "Hopper",
+     "role": "writer",
+     "email": "grace@example.com"
+    },
+    "experiments": {
+     "baselineIdx": 0,
+     "items": []
+    },
+    "customProperties": {},
+    "archived": false,
+    "deprecated": false,
+    "defaults": {
+     "onVariation": 0,
+     "offVariation": 1
+    },
+    "environments": {
+     "production": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1794652920000,
+      "version": 8,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [
+       {
+        "_id": "r-nc-1",
+        "variation": 0,
+        "disabled": true,
+        "clauses": [
+         {
+          "_id": "c-nc-1",
+          "attribute": "segmentMatch",
+          "op": "segmentMatch",
+          "values": [
+           "beta-testers",
+           "enterprise"
+          ],
+          "contextKind": "user",
+          "negate": false
+         }
+        ],
+        "trackEvents": false,
+        "description": "Beta and enterprise"
+       }
+      ],
+      "fallthrough": {
+       "rollout": {
+        "variations": [
+         {
+          "variation": 0,
+          "weight": 10000
+         },
+         {
+          "variation": 1,
+          "weight": 90000
+         }
+        ],
+        "bucketBy": "key",
+        "contextKind": "user"
+       }
+      },
+      "offVariation": 1,
+      "prerequisites": [
+       {
+        "key": "dark-mode",
+        "variation": 0
+       }
+      ],
+      "_site": {
+       "href": "/default/production/features/new-checkout",
+       "type": "text/html"
+      },
+      "_environmentName": "Production",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 1,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 1
+      }
+     },
+     "staging": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1794441600000,
+      "version": 4,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/staging/features/new-checkout",
+       "type": "text/html"
+      },
+      "_environmentName": "Staging",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "test": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1793491200000,
+      "version": 3,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/test/features/new-checkout",
+       "type": "text/html"
+      },
+      "_environmentName": "Test",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     }
+    },
+    "maintainerTeamKey": "checkout-team",
+    "_maintainerTeam": {
+     "key": "checkout-team",
+     "name": "checkout-team"
+    }
+   },
+   {
+    "name": "Pricing tier",
+    "kind": "multivariate",
+    "description": "",
+    "key": "pricing-tier",
+    "_version": 1,
+    "creationDate": 1709251200000,
+    "includeInSnippet": false,
+    "clientSideAvailability": {
+     "usingEnvironmentId": false,
+     "usingMobileKey": false
+    },
+    "variations": [
+     {
+      "_id": "v-basic",
+      "value": "basic",
+      "name": "Basic"
+     },
+     {
+      "_id": "v-pro",
+      "value": "pro",
+      "name": "Pro"
+     },
+     {
+      "_id": "v-ent",
+      "value": "enterprise",
+      "name": "Enterprise"
+     }
+    ],
+    "temporary": false,
+    "tags": [
+     "pricing"
+    ],
+    "_links": {
+     "self": {
+      "href": "/api/v2/flags/default/pricing-tier",
+      "type": "application/json"
+     }
+    },
+    "maintainerId": "m1ada0000000000000000001",
+    "_maintainer": {
+     "_links": {
+      "self": {
+       "href": "/api/v2/members/m1ada0000000000000000001",
+       "type": "application/json"
+      }
+     },
+     "_id": "m1ada0000000000000000001",
+     "firstName": "Ada",
+     "lastName": "Lovelace",
+     "role": "admin",
+     "email": "ada@example.com"
+    },
+    "experiments": {
+     "baselineIdx": 0,
+     "items": []
+    },
+    "customProperties": {},
+    "archived": false,
+    "deprecated": false,
+    "defaults": {
+     "onVariation": 0,
+     "offVariation": 2
+    },
+    "environments": {
+     "production": {
+      "on": false,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1780272000000,
+      "version": 3,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [
+       {
+        "_id": "r-pt-1",
+        "variation": 2,
+        "clauses": [
+         {
+          "_id": "c-pt-1",
+          "attribute": "plan",
+          "op": "in",
+          "values": [
+           "enterprise"
+          ],
+          "contextKind": "organization",
+          "negate": false
+         },
+         {
+          "_id": "c-pt-2",
+          "attribute": "seats",
+          "op": "greaterThan",
+          "values": [
+           100
+          ],
+          "contextKind": "organization",
+          "negate": false
+         }
+        ],
+        "trackEvents": false,
+        "description": "Big orgs"
+       }
+      ],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 0,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/production/features/pricing-tier",
+       "type": "text/html"
+      },
+      "_environmentName": "Production",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 1,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "staging": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1780272000000,
+      "version": 3,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 0,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/staging/features/pricing-tier",
+       "type": "text/html"
+      },
+      "_environmentName": "Staging",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "test": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1780272000000,
+      "version": 3,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 0,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/test/features/pricing-tier",
+       "type": "text/html"
+      },
+      "_environmentName": "Test",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     }
+    }
+   },
+   {
+    "name": "Legacy banner",
+    "kind": "boolean",
+    "description": "",
+    "key": "legacy-banner",
+    "_version": 1,
+    "creationDate": 1688169600000,
+    "includeInSnippet": false,
+    "clientSideAvailability": {
+     "usingEnvironmentId": false,
+     "usingMobileKey": false
+    },
+    "variations": [
+     {
+      "_id": "v-true",
+      "value": true,
+      "name": "On"
+     },
+     {
+      "_id": "v-false",
+      "value": false,
+      "name": "Off"
+     }
+    ],
+    "temporary": true,
+    "tags": [
+     "ui"
+    ],
+    "_links": {
+     "self": {
+      "href": "/api/v2/flags/default/legacy-banner",
+      "type": "application/json"
+     }
+    },
+    "maintainerId": "m1ada0000000000000000001",
+    "_maintainer": {
+     "_links": {
+      "self": {
+       "href": "/api/v2/members/m1ada0000000000000000001",
+       "type": "application/json"
+      }
+     },
+     "_id": "m1ada0000000000000000001",
+     "firstName": "Ada",
+     "lastName": "Lovelace",
+     "role": "admin",
+     "email": "ada@example.com"
+    },
+    "experiments": {
+     "baselineIdx": 0,
+     "items": []
+    },
+    "customProperties": {},
+    "archived": true,
+    "deprecated": false,
+    "defaults": {
+     "onVariation": 0,
+     "offVariation": 1
+    },
+    "environments": {
+     "production": {
+      "on": false,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1788048000000,
+      "version": 9,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/production/features/legacy-banner",
+       "type": "text/html"
+      },
+      "_environmentName": "Production",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "staging": {
+      "on": false,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1788048000000,
+      "version": 9,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/staging/features/legacy-banner",
+       "type": "text/html"
+      },
+      "_environmentName": "Staging",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "test": {
+      "on": false,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1788048000000,
+      "version": 9,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/test/features/legacy-banner",
+       "type": "text/html"
+      },
+      "_environmentName": "Test",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     }
+    },
+    "archivedDate": 1788220800000
+   },
+   {
+    "name": "Old search",
+    "kind": "boolean",
+    "description": "",
+    "key": "old-search",
+    "_version": 1,
+    "creationDate": 1693526400000,
+    "includeInSnippet": false,
+    "clientSideAvailability": {
+     "usingEnvironmentId": false,
+     "usingMobileKey": false
+    },
+    "variations": [
+     {
+      "_id": "v-true",
+      "value": true,
+      "name": "On"
+     },
+     {
+      "_id": "v-false",
+      "value": false,
+      "name": "Off"
+     }
+    ],
+    "temporary": true,
+    "tags": [
+     "search"
+    ],
+    "_links": {
+     "self": {
+      "href": "/api/v2/flags/default/old-search",
+      "type": "application/json"
+     }
+    },
+    "maintainerId": "m2grace000000000000000002",
+    "_maintainer": {
+     "_links": {
+      "self": {
+       "href": "/api/v2/members/m2grace000000000000000002",
+       "type": "application/json"
+      }
+     },
+     "_id": "m2grace000000000000000002",
+     "firstName": "Grace",
+     "lastName": "Hopper",
+     "role": "writer",
+     "email": "grace@example.com"
+    },
+    "experiments": {
+     "baselineIdx": 0,
+     "items": []
+    },
+    "customProperties": {},
+    "archived": false,
+    "deprecated": true,
+    "defaults": {
+     "onVariation": 0,
+     "offVariation": 1
+    },
+    "environments": {
+     "production": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1782864000000,
+      "version": 4,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/production/features/old-search",
+       "type": "text/html"
+      },
+      "_environmentName": "Production",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "staging": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1782864000000,
+      "version": 4,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/staging/features/old-search",
+       "type": "text/html"
+      },
+      "_environmentName": "Staging",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "test": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1782864000000,
+      "version": 4,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/test/features/old-search",
+       "type": "text/html"
+      },
+      "_environmentName": "Test",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     }
+    },
+    "deprecatedDate": 1785542400000
+   },
+   {
+    "name": "API rate limit",
+    "kind": "multivariate",
+    "description": "",
+    "key": "api-rate-limit",
+    "_version": 1,
+    "creationDate": 1746403200000,
+    "includeInSnippet": false,
+    "clientSideAvailability": {
+     "usingEnvironmentId": false,
+     "usingMobileKey": false
+    },
+    "variations": [
+     {
+      "_id": "v-100",
+      "value": 100,
+      "name": "Low"
+     },
+     {
+      "_id": "v-1000",
+      "value": 1000,
+      "name": "High"
+     },
+     {
+      "_id": "v-cfg",
+      "value": {
+       "burst": 50,
+       "rate": 500
+      },
+      "name": "Custom"
+     }
+    ],
+    "temporary": false,
+    "tags": [
+     "backend"
+    ],
+    "_links": {
+     "self": {
+      "href": "/api/v2/flags/default/api-rate-limit",
+      "type": "application/json"
+     }
+    },
+    "maintainerId": "m4kat00000000000000000004",
+    "_maintainer": {
+     "_links": {
+      "self": {
+       "href": "/api/v2/members/m4kat00000000000000000004",
+       "type": "application/json"
+      }
+     },
+     "_id": "m4kat00000000000000000004",
+     "firstName": "Katherine",
+     "lastName": "Johnson",
+     "role": "owner",
+     "email": "kat@example.com"
+    },
+    "experiments": {
+     "baselineIdx": 0,
+     "items": []
+    },
+    "customProperties": {},
+    "archived": false,
+    "deprecated": false,
+    "defaults": {
+     "onVariation": 0,
+     "offVariation": 2
+    },
+    "environments": {
+     "production": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1794654300000,
+      "version": 6,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 1
+      },
+      "offVariation": 0,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/production/features/api-rate-limit",
+       "type": "text/html"
+      },
+      "_environmentName": "Production",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "staging": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1791158400000,
+      "version": 2,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 0,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/staging/features/api-rate-limit",
+       "type": "text/html"
+      },
+      "_environmentName": "Staging",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "test": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1791158400000,
+      "version": 2,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 0,
+      "prerequisites": [],
+      "_site": {
+       "href": "/default/test/features/api-rate-limit",
+       "type": "text/html"
+      },
+      "_environmentName": "Test",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     }
+    },
+    "maintainerTeamKey": "platform",
+    "_maintainerTeam": {
+     "key": "platform",
+     "name": "platform"
+    }
+   }
+  ],
+  "mobile": [
+   {
+    "name": "Onboarding v2",
+    "kind": "boolean",
+    "description": "",
+    "key": "onboarding-v2",
+    "_version": 1,
+    "creationDate": 1791590400000,
+    "includeInSnippet": false,
+    "clientSideAvailability": {
+     "usingEnvironmentId": false,
+     "usingMobileKey": true
+    },
+    "variations": [
+     {
+      "_id": "v-true",
+      "value": true,
+      "name": "On"
+     },
+     {
+      "_id": "v-false",
+      "value": false,
+      "name": "Off"
+     }
+    ],
+    "temporary": true,
+    "tags": [
+     "onboarding"
+    ],
+    "_links": {
+     "self": {
+      "href": "/api/v2/flags/default/onboarding-v2",
+      "type": "application/json"
+     }
+    },
+    "maintainerId": "m2grace000000000000000002",
+    "_maintainer": {
+     "_links": {
+      "self": {
+       "href": "/api/v2/members/m2grace000000000000000002",
+       "type": "application/json"
+      }
+     },
+     "_id": "m2grace000000000000000002",
+     "firstName": "Grace",
+     "lastName": "Hopper",
+     "role": "writer",
+     "email": "grace@example.com"
+    },
+    "experiments": {
+     "baselineIdx": 0,
+     "items": []
+    },
+    "customProperties": {},
+    "archived": false,
+    "deprecated": false,
+    "defaults": {
+     "onVariation": 0,
+     "offVariation": 1
+    },
+    "environments": {
+     "production": {
+      "on": false,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1792454400000,
+      "version": 2,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/mobile/production/features/onboarding-v2",
+       "type": "text/html"
+      },
+      "_environmentName": "Production",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     },
+     "development": {
+      "on": true,
+      "archived": false,
+      "salt": "s",
+      "sel": "x",
+      "lastModified": 1792540800000,
+      "version": 3,
+      "targets": [],
+      "contextTargets": [],
+      "rules": [],
+      "fallthrough": {
+       "variation": 0
+      },
+      "offVariation": 1,
+      "prerequisites": [],
+      "_site": {
+       "href": "/mobile/development/features/onboarding-v2",
+       "type": "text/html"
+      },
+      "_environmentName": "Development",
+      "trackEvents": false,
+      "trackEventsFallthrough": false,
+      "_summary": {
+       "variations": {
+        "0": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isFallthrough": true
+        },
+        "1": {
+         "rules": 0,
+         "nullRules": 0,
+         "targets": 0,
+         "contextTargets": 0,
+         "isOff": true
+        }
+       },
+       "prerequisites": 0
+      }
+     }
+    }
+   }
+  ]
+ },
+ "flag_statuses": {
+  "default/production": {
+   "dark-mode": [
+    "active",
+    "2026-11-14T11:59:00Z",
+    false
+   ],
+   "new-checkout": [
+    "active",
+    "2026-11-14T11:58:00Z",
+    false
+   ],
+   "pricing-tier": [
+    "inactive",
+    "2026-09-01T00:00:00Z",
+    "basic"
+   ],
+   "legacy-banner": [
+    "inactive",
+    "2026-08-30T00:00:00Z",
+    false
+   ],
+   "old-search": [
+    "launched",
+    "2026-11-14T11:00:00Z",
+    true
+   ],
+   "api-rate-limit": [
+    "launched",
+    "2026-11-14T11:30:00Z",
+    1000
+   ]
+  },
+  "default/staging": {
+   "dark-mode": [
+    "active",
+    "2026-11-13T00:00:00Z",
+    false
+   ],
+   "new-checkout": [
+    "new",
+    null,
+    null
+   ],
+   "pricing-tier": [
+    "inactive",
+    "2026-06-02T00:00:00Z",
+    "basic"
+   ],
+   "legacy-banner": [
+    "inactive",
+    "2026-08-30T00:00:00Z",
+    false
+   ],
+   "old-search": [
+    "launched",
+    "2026-11-12T00:00:00Z",
+    true
+   ],
+   "api-rate-limit": [
+    "launched",
+    "2026-11-12T00:00:00Z",
+    1000
+   ]
+  },
+  "default/test": {
+   "dark-mode": [
+    "inactive",
+    "2026-10-01T00:00:00Z",
+    false
+   ],
+   "new-checkout": [
+    "new",
+    null,
+    null
+   ],
+   "pricing-tier": [
+    "new",
+    null,
+    null
+   ],
+   "legacy-banner": [
+    "inactive",
+    "2026-08-30T00:00:00Z",
+    false
+   ],
+   "old-search": [
+    "launched",
+    "2026-11-01T00:00:00Z",
+    true
+   ],
+   "api-rate-limit": [
+    "active",
+    "2026-11-10T00:00:00Z",
+    1000
+   ]
+  },
+  "mobile/production": {
+   "onboarding-v2": [
+    "new",
+    null,
+    null
+   ]
+  },
+  "mobile/development": {
+   "onboarding-v2": [
+    "active",
+    "2026-11-14T00:00:00Z",
+    true
+   ]
+  }
+ },
+ "segments": {
+  "default/production": [
+   {
+    "name": "Beta testers",
+    "tags": [
+     "beta"
+    ],
+    "creationDate": 1735689600000,
+    "lastModifiedDate": 1794649800000,
+    "key": "beta-testers",
+    "included": [
+     "user-1",
+     "user-2",
+     "user-3"
+    ],
+    "excluded": [
+     "user-9"
+    ],
+    "includedContexts": [
+     {
+      "contextKind": "organization",
+      "values": [
+       "org-1"
+      ]
+     }
+    ],
+    "excludedContexts": [],
+    "_links": {
+     "self": {
+      "href": "x"
+     }
+    },
+    "rules": [
+     {
+      "_id": "sr-1",
+      "clauses": [
+       {
+        "_id": "sc-1",
+        "attribute": "email",
+        "op": "endsWith",
+        "values": [
+         "@beta.example.com"
+        ],
+        "contextKind": "user",
+        "negate": false
+       }
+      ],
+      "description": "Beta domain"
+     }
+    ],
+    "version": 3,
+    "deleted": false,
+    "generation": 1,
+    "unbounded": false,
+    "description": "People in the beta program"
+   },
+   {
+    "name": "Enterprise customers",
+    "tags": [
+     "enterprise"
+    ],
+    "creationDate": 1738368000000,
+    "lastModifiedDate": 1790812800000,
+    "key": "enterprise",
+    "included": [],
+    "excluded": [],
+    "includedContexts": [],
+    "excludedContexts": [],
+    "_links": {
+     "self": {
+      "href": "x"
+     }
+    },
+    "rules": [
+     {
+      "_id": "sr-2",
+      "clauses": [
+       {
+        "_id": "sc-2",
+        "attribute": "plan",
+        "op": "in",
+        "values": [
+         "enterprise"
+        ],
+        "contextKind": "organization",
+        "negate": false
+       }
+      ],
+      "description": "Enterprise plan"
+     },
+     {
+      "_id": "sr-3",
+      "clauses": [
+       {
+        "_id": "sc-3",
+        "attribute": "seats",
+        "op": "greaterThan",
+        "values": [
+         500
+        ],
+        "contextKind": "organization",
+        "negate": false
+       },
+       {
+        "_id": "sc-4",
+        "attribute": "country",
+        "op": "in",
+        "values": [
+         "US"
+        ],
+        "contextKind": "organization",
+        "negate": false
+       }
+      ],
+      "weight": 50000,
+      "bucketBy": "key"
+     }
+    ],
+    "version": 3,
+    "deleted": false,
+    "generation": 1,
+    "unbounded": false
+   },
+   {
+    "name": "Big cohort",
+    "tags": [
+     "beta",
+     "data"
+    ],
+    "creationDate": 1772323200000,
+    "lastModifiedDate": 1793491200000,
+    "key": "big-cohort",
+    "included": [],
+    "excluded": [],
+    "includedContexts": [],
+    "excludedContexts": [],
+    "_links": {
+     "self": {
+      "href": "x"
+     }
+    },
+    "rules": [],
+    "version": 3,
+    "deleted": false,
+    "generation": 1,
+    "unbounded": true,
+    "unboundedContextKind": "user"
+   }
+  ],
+  "default/staging": [
+   {
+    "name": "Beta testers",
+    "tags": [
+     "beta"
+    ],
+    "creationDate": 1735689600000,
+    "lastModifiedDate": 1793491200000,
+    "key": "beta-testers",
+    "included": [
+     "user-1"
+    ],
+    "excluded": [],
+    "includedContexts": [],
+    "excludedContexts": [],
+    "_links": {
+     "self": {
+      "href": "x"
+     }
+    },
+    "rules": [],
+    "version": 3,
+    "deleted": false,
+    "generation": 1,
+    "unbounded": false
+   }
+  ],
+  "default/test": [],
+  "mobile/production": [
+   {
+    "name": "iOS users",
+    "tags": [
+     "ios"
+    ],
+    "creationDate": 1717200000000,
+    "lastModifiedDate": 1767225600000,
+    "key": "ios-users",
+    "included": [],
+    "excluded": [],
+    "includedContexts": [],
+    "excludedContexts": [],
+    "_links": {
+     "self": {
+      "href": "x"
+     }
+    },
+    "rules": [
+     {
+      "_id": "sr-4",
+      "clauses": [
+       {
+        "_id": "sc-5",
+        "attribute": "os",
+        "op": "in",
+        "values": [
+         "iOS"
+        ],
+        "contextKind": "device",
+        "negate": false
+       }
+      ]
+     }
+    ],
+    "version": 3,
+    "deleted": false,
+    "generation": 1,
+    "unbounded": false
+   }
+  ],
+  "mobile/development": []
+ },
+ "context_kinds": {
+  "default": [
+   {
+    "key": "user",
+    "name": "user",
+    "description": "",
+    "version": 1,
+    "creationDate": 1685577600000,
+    "lastModified": 1685577600000,
+    "lastSeen": 1794657540000,
+    "createdFrom": "default",
+    "archived": false,
+    "hideInTargeting": false,
+    "_links": {}
+   },
+   {
+    "key": "organization",
+    "name": "Organization",
+    "description": "Customer accounts",
+    "version": 2,
+    "creationDate": 1704067200000,
+    "lastModified": 1706745600000,
+    "lastSeen": 1794654000000,
+    "createdFrom": "manual",
+    "archived": false,
+    "_links": {}
+   },
+   {
+    "key": "device",
+    "name": "device",
+    "description": "",
+    "version": 1,
+    "creationDate": 1709251200000,
+    "lastModified": 1709251200000,
+    "createdFrom": "auto-add",
+    "archived": true,
+    "_links": {}
+   }
+  ],
+  "mobile": [
+   {
+    "key": "user",
+    "name": "user",
+    "description": "",
+    "version": 1,
+    "creationDate": 1714521600000,
+    "lastModified": 1714521600000,
+    "lastSeen": 1794614400000,
+    "createdFrom": "default",
+    "archived": false,
+    "_links": {}
+   }
+  ]
+ },
+ "teams": [
+  {
+   "key": "checkout-team",
+   "name": "Checkout",
+   "description": "Owns the checkout funnel",
+   "_creationDate": 1735689600000,
+   "_lastModified": 1790812800000,
+   "_version": 3,
+   "_idpSynced": false,
+   "_links": {},
+   "memberIds": [
+    "m2grace000000000000000002",
+    "m5radia000000000000000005"
+   ],
+   "roleKeys": [
+    "release-manager"
+   ]
+  },
+  {
+   "key": "platform",
+   "name": "Platform",
+   "description": "Infrastructure and APIs",
+   "_creationDate": 1704067200000,
+   "_lastModified": 1777593600000,
+   "_version": 7,
+   "_idpSynced": true,
+   "_links": {},
+   "memberIds": [
+    "m1ada0000000000000000001",
+    "m4kat00000000000000000004"
+   ],
+   "roleKeys": []
+  },
+  {
+   "key": "empty-team",
+   "name": "Empty",
+   "description": "",
+   "_creationDate": 1767225600000,
+   "_lastModified": 1767225600000,
+   "_version": 1,
+   "_idpSynced": false,
+   "_links": {},
+   "memberIds": [],
+   "roleKeys": []
+  }
+ ],
+ "roles": [
+  {
+   "_id": "role1",
+   "_links": {},
+   "key": "release-manager",
+   "name": "Release manager",
+   "description": "Toggle production flags",
+   "basePermissions": "reader",
+   "resourceCategory": "project",
+   "assignedTo": {
+    "membersCount": 1,
+    "teamsCount": 1
+   },
+   "policy": [
+    {
+     "effect": "allow",
+     "actions": [
+      "updateOn",
+      "updateFallthrough"
+     ],
+     "resources": [
+      "proj/*:env/production:flag/*"
+     ]
+    },
+    {
+     "effect": "deny",
+     "actions": [
+      "deleteFlag"
+     ],
+     "resources": [
+      "proj/*:env/*:flag/*"
+     ]
+    }
+   ]
+  },
+  {
+   "_id": "role2",
+   "_links": {},
+   "key": "read-only-prod",
+   "name": "Read only production",
+   "basePermissions": "no_access",
+   "resourceCategory": "project",
+   "assignedTo": {
+    "membersCount": 1,
+    "teamsCount": 0
+   },
+   "policy": [
+    {
+     "effect": "allow",
+     "notActions": [
+      "*"
+     ],
+     "resources": [
+      "proj/*:env/production:flag/*"
+     ]
+    }
+   ]
+  }
+ ],
+ "approval_requests": [
+  {
+   "_id": "ap1",
+   "_version": 1,
+   "creationDate": 1794582000000,
+   "serviceKind": "launchdarkly",
+   "requestorId": "m2grace000000000000000002",
+   "description": "Ramp new checkout to 50%",
+   "reviewStatus": "pending",
+   "allReviews": [],
+   "notifyMemberIds": [
+    "m1ada0000000000000000001"
+   ],
+   "notifyTeamKeys": [
+    "platform"
+   ],
+   "status": "pending",
+   "instructions": [
+    {
+     "kind": "updateFallthroughVariationOrRollout",
+     "rolloutWeights": {
+      "v-true": 50000,
+      "v-false": 50000
+     }
+    }
+   ],
+   "conflicts": [],
+   "resourceId": "proj/default:env/production:flag/new-checkout",
+   "_links": {}
+  },
+  {
+   "_id": "ap2",
+   "_version": 2,
+   "creationDate": 1794301200000,
+   "serviceKind": "launchdarkly",
+   "requestorId": "m1ada0000000000000000001",
+   "description": "Turn on dark mode",
+   "reviewStatus": "approved",
+   "allReviews": [
+    {
+     "_id": "rv1",
+     "kind": "approve",
+     "memberId": "m4kat00000000000000000004",
+     "comment": "LGTM",
+     "creationDate": 1794304800000
+    }
+   ],
+   "notifyMemberIds": [
+    "m4kat00000000000000000004"
+   ],
+   "status": "completed",
+   "appliedDate": 1794308400000,
+   "appliedByMemberId": "m1ada0000000000000000001",
+   "instructions": [
+    {
+     "kind": "turnFlagOn"
+    }
+   ],
+   "conflicts": [],
+   "resourceId": "proj/default:env/production:flag/dark-mode",
+   "_links": {}
+  },
+  {
+   "_id": "ap3",
+   "_version": 1,
+   "creationDate": 1794484800000,
+   "serviceKind": "launchdarkly",
+   "requestorId": "m2grace000000000000000002",
+   "description": "Add enterprise rule",
+   "reviewStatus": "declined",
+   "allReviews": [
+    {
+     "_id": "rv2",
+     "kind": "decline",
+     "memberId": "m1ada0000000000000000001",
+     "comment": "Not yet"
+    }
+   ],
+   "notifyMemberIds": [
+    "m1ada0000000000000000001"
+   ],
+   "status": "pending",
+   "instructions": [
+    {
+     "kind": "addRule"
+    }
+   ],
+   "conflicts": [],
+   "resourceId": "proj/default:env/production:segment/enterprise",
+   "_links": {}
+  },
+  {
+   "_id": "ap4",
+   "_version": 1,
+   "creationDate": 1794643200000,
+   "serviceKind": "launchdarkly",
+   "requestorId": "m2grace000000000000000002",
+   "description": "Schedule onboarding",
+   "reviewStatus": "pending",
+   "allReviews": [],
+   "notifyMemberIds": [
+    "m1ada0000000000000000001"
+   ],
+   "status": "scheduled",
+   "executionDate": 1796115600000,
+   "instructions": [
+    {
+     "kind": "turnFlagOn"
+    }
+   ],
+   "conflicts": [],
+   "resourceId": "proj/mobile:env/production:flag/onboarding-v2",
+   "_links": {}
+  }
+ ],
+ "scheduled_changes": {
+  "default/production/new-checkout": [
+   {
+    "_id": "sc1",
+    "_creationDate": 1794528000000,
+    "_maintainerId": "m2grace000000000000000002",
+    "_version": 1,
+    "executionDate": 1795165200000,
+    "instructions": [
+     {
+      "kind": "updateFallthroughVariationOrRollout",
+      "variationId": "v-true"
+     }
+    ],
+    "conflicts": null,
+    "_links": {}
+   }
+  ],
+  "default/staging/dark-mode": [
+   {
+    "_id": "sc2",
+    "_creationDate": 1793491200000,
+    "_maintainerId": "m1ada0000000000000000001",
+    "_version": 2,
+    "executionDate": 1794960000000,
+    "instructions": [
+     {
+      "kind": "turnFlagOff"
+     },
+     {
+      "kind": "removeRule",
+      "ruleId": "r-dm-s1"
+     }
+    ],
+    "conflicts": [
+     {
+      "_id": "sc9",
+      "reason": "overlaps"
+     }
+    ],
+    "_links": {}
+   }
+  ]
+ },
+ "experiments": {
+  "default": [
+   {
+    "_id": "ex1",
+    "key": "checkout-conversion",
+    "name": "Checkout conversion",
+    "description": "Does the new checkout convert better?",
+    "_maintainerId": "m2grace000000000000000002",
+    "_creationDate": 1790812800000,
+    "environmentKey": "production",
+    "methodology": "bayesian",
+    "dataSource": "launchdarkly",
+    "tags": [
+     "checkout"
+    ],
+    "type": "experiment",
+    "_links": {},
+    "currentIteration": {
+     "_id": "it1",
+     "hypothesis": "New checkout lifts conversion by 5%",
+     "status": "running",
+     "createdAt": 1790899200000,
+     "startedAt": 1790985600000,
+     "randomizationUnit": "user",
+     "flags": {
+      "new-checkout": {
+       "targetingRule": "fallthrough",
+       "flagConfigVersion": 8,
+       "_links": {}
+      }
+     },
+     "primarySingleMetric": {
+      "key": "checkout-completed",
+      "name": "Checkout completed",
+      "kind": "custom",
+      "_links": {}
+     },
+     "metrics": [
+      {
+       "key": "checkout-completed",
+       "_versionId": "mv1",
+       "name": "Checkout completed",
+       "kind": "custom",
+       "isGroup": false,
+       "_links": {}
+      },
+      {
+       "key": "page-load-ms",
+       "_versionId": "mv2",
+       "name": "Page load",
+       "kind": "custom",
+       "isGroup": false,
+       "_links": {}
+      }
+     ],
+     "treatments": [
+      {
+       "_id": "v-false",
+       "name": "Control",
+       "allocationPercent": "50",
+       "baseline": true
+      },
+      {
+       "_id": "v-true",
+       "name": "New checkout",
+       "allocationPercent": "50",
+       "baseline": false
+      }
+     ]
+    }
+   },
+   {
+    "_id": "ex2",
+    "key": "pricing-test",
+    "name": "Pricing page test",
+    "_maintainerId": "m1ada0000000000000000001",
+    "_creationDate": 1777593600000,
+    "environmentKey": "production",
+    "methodology": "frequentist",
+    "dataSource": "launchdarkly",
+    "tags": [
+     "pricing"
+    ],
+    "_links": {},
+    "currentIteration": {
+     "_id": "it2",
+     "hypothesis": "Pro sells better",
+     "status": "stopped",
+     "createdAt": 1777680000000,
+     "startedAt": 1777766400000,
+     "endedAt": 1780272000000,
+     "winningTreatmentId": "v-pro",
+     "winningReason": "Significant lift",
+     "flags": {
+      "pricing-tier": {
+       "_links": {}
+      }
+     },
+     "primarySingleMetric": {
+      "key": "pricing-page-view",
+      "name": "Pricing page view",
+      "kind": "pageview",
+      "_links": {}
+     },
+     "metrics": [
+      {
+       "key": "pricing-page-view",
+       "_versionId": "mv3",
+       "name": "Pricing page view",
+       "kind": "pageview",
+       "isGroup": false,
+       "_links": {}
+      }
+     ],
+     "treatments": [
+      {
+       "_id": "v-basic",
+       "name": "Basic",
+       "allocationPercent": "50",
+       "baseline": true
+      },
+      {
+       "_id": "v-pro",
+       "name": "Pro",
+       "allocationPercent": "50",
+       "baseline": false
+      }
+     ]
+    }
+   },
+   {
+    "_id": "ex3",
+    "key": "old-banner-test",
+    "name": "Old banner test",
+    "_maintainerId": "m1ada0000000000000000001",
+    "_creationDate": 1704067200000,
+    "archivedDate": 1717200000000,
+    "environmentKey": "staging",
+    "methodology": "bayesian",
+    "tags": [],
+    "_links": {},
+    "currentIteration": {
+     "_id": "it3",
+     "hypothesis": "Banner helps",
+     "status": "stopped",
+     "createdAt": 1704153600000,
+     "flags": {
+      "legacy-banner": {
+       "_links": {}
+      }
+     },
+     "metrics": [],
+     "treatments": []
+    }
+   }
+  ],
+  "mobile": []
+ },
+ "metrics": {
+  "default": [
+   {
+    "_id": "mt1",
+    "_versionId": "mv1",
+    "_version": 1,
+    "key": "checkout-completed",
+    "name": "Checkout completed",
+    "kind": "custom",
+    "eventKey": "checkout-completed",
+    "isNumeric": false,
+    "successCriteria": "HigherThanBaseline",
+    "tags": [
+     "checkout",
+     "conversion"
+    ],
+    "_creationDate": 1788220800000,
+    "maintainerId": "m2grace000000000000000002",
+    "dataSource": {
+     "key": "launchdarkly-hosted"
+    },
+    "_attachedFlagCount": 1,
+    "experimentCount": 1,
+    "lastSeen": 1794654000000,
+    "archived": false,
+    "analysisUnits": [
+     "user"
+    ],
+    "unitAggregationType": "sum",
+    "analysisType": "mean",
+    "_links": {}
+   },
+   {
+    "_id": "mt2",
+    "_versionId": "mv2",
+    "_version": 3,
+    "key": "page-load-ms",
+    "name": "Page load",
+    "kind": "custom",
+    "eventKey": "page-load",
+    "isNumeric": true,
+    "unit": "ms",
+    "successCriteria": "LowerThanBaseline",
+    "tags": [
+     "performance"
+    ],
+    "_creationDate": 1756684800000,
+    "maintainerId": "m4kat00000000000000000004",
+    "dataSource": {
+     "key": "launchdarkly-hosted"
+    },
+    "_attachedFlagCount": 2,
+    "experimentCount": 1,
+    "archived": false,
+    "analysisUnits": [
+     "user"
+    ],
+    "unitAggregationType": "average",
+    "analysisType": "percentile",
+    "percentileValue": 95,
+    "_links": {}
+   },
+   {
+    "_id": "mt3",
+    "_versionId": "mv3",
+    "_version": 1,
+    "key": "pricing-page-view",
+    "name": "Pricing page view",
+    "kind": "pageview",
+    "tags": [
+     "pricing",
+     "conversion"
+    ],
+    "_creationDate": 1775001600000,
+    "maintainerId": "m1ada0000000000000000001",
+    "dataSource": {
+     "key": "launchdarkly-hosted"
+    },
+    "_attachedFlagCount": 0,
+    "experimentCount": 1,
+    "archived": false,
+    "urls": [
+     {
+      "kind": "substring",
+      "substring": "/pricing"
+     }
+    ],
+    "_links": {}
+   }
+  ],
+  "mobile": []
+ },
+ "release_pipelines": {
+  "default": [
+   {
+    "createdAt": "2025-06-01T00:00:00Z",
+    "description": "Test, then staging, then production",
+    "key": "standard",
+    "name": "Standard release",
+    "tags": [
+     "default"
+    ],
+    "_version": 2,
+    "isProjectDefault": true,
+    "_isLegacy": false,
+    "phases": [
+     {
+      "id": "ph1",
+      "name": "Testing",
+      "audiences": [
+       {
+        "name": "Test",
+        "environment": {
+         "key": "test",
+         "name": "Test",
+         "color": "x",
+         "_links": {}
+        }
+       },
+       {
+        "name": "Staging",
+        "environment": {
+         "key": "staging",
+         "name": "Staging",
+         "color": "x",
+         "_links": {}
+        }
+       }
+      ]
+     },
+     {
+      "id": "ph2",
+      "name": "Production",
+      "audiences": [
+       {
+        "name": "Production",
+        "environment": {
+         "key": "production",
+         "name": "Production",
+         "color": "x",
+         "_links": {}
+        },
+        "segmentKeys": [
+         "beta-testers"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "createdAt": "2026-01-01T00:00:00Z",
+    "key": "hotfix",
+    "name": "Hotfix",
+    "tags": [],
+    "_version": 1,
+    "isProjectDefault": false,
+    "_isLegacy": true,
+    "phases": [
+     {
+      "id": "ph3",
+      "name": "Production",
+      "audiences": [
+       {
+        "name": "Production",
+        "environment": {
+         "key": "production",
+         "name": "Production",
+         "color": "x",
+         "_links": {}
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "mobile": []
+ },
+ "repositories": [
+  {
+   "name": "web-app",
+   "sourceLink": "https://github.com/example/web-app",
+   "type": "github",
+   "defaultBranch": "main",
+   "enabled": true,
+   "version": 4,
+   "_links": {},
+   "branches": [
+    {
+     "name": "main",
+     "head": "a1b2c3d",
+     "syncTime": 1794636000000,
+     "_links": {},
+     "references": [
+      {
+       "path": "src/theme.ts",
+       "hint": "typescript",
+       "hunks": [
+        {
+         "startingLineNumber": 12,
+         "lines": "if (ld.variation('dark-mode', false)) {",
+         "projKey": "default",
+         "flagKey": "dark-mode",
+         "aliases": [
+          "darkMode"
+         ]
+        },
+        {
+         "startingLineNumber": 40,
+         "lines": "const dm = flags.darkMode;",
+         "projKey": "default",
+         "flagKey": "dark-mode",
+         "aliases": [
+          "darkMode"
+         ]
+        }
+       ]
+      },
+      {
+       "path": "src/checkout/index.ts",
+       "hint": "typescript",
+       "hunks": [
+        {
+         "startingLineNumber": 5,
+         "lines": "ld.variation('new-checkout', false)",
+         "projKey": "default",
+         "flagKey": "new-checkout",
+         "aliases": []
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "feature/x",
+     "head": "ffff111",
+     "syncTime": 1794290400000,
+     "_links": {},
+     "references": [
+      {
+       "path": "src/x.ts",
+       "hint": "typescript",
+       "hunks": [
+        {
+         "startingLineNumber": 1,
+         "lines": "ld.variation('dark-mode')",
+         "projKey": "default",
+         "flagKey": "dark-mode",
+         "aliases": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "api-server",
+   "sourceLink": "https://gitlab.com/example/api-server",
+   "type": "gitlab",
+   "defaultBranch": "master",
+   "enabled": true,
+   "version": 2,
+   "_links": {},
+   "branches": [
+    {
+     "name": "master",
+     "head": "9988776",
+     "syncTime": 1794549600000,
+     "_links": {},
+     "references": [
+      {
+       "path": "limits/rate.go",
+       "hint": "go",
+       "hunks": [
+        {
+         "startingLineNumber": 88,
+         "lines": "client.IntVariation(\"api-rate-limit\", ctx, 100)",
+         "projKey": "default",
+         "flagKey": "api-rate-limit",
+         "aliases": []
+        }
+       ]
+      },
+      {
+       "path": "mobile/onboard.go",
+       "hint": "go",
+       "hunks": [
+        {
+         "startingLineNumber": 3,
+         "lines": "BoolVariation(\"onboarding-v2\")",
+         "projKey": "mobile",
+         "flagKey": "onboarding-v2",
+         "aliases": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "auditlog": [
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al01"
+    }
+   },
+   "_id": "al01",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateFallthrough",
+     "resource": "proj/default:env/production:flag/api-rate-limit"
+    }
+   ],
+   "kind": "flag",
+   "name": "API rate limit",
+   "description": "- Changed the default rule to serve **High**",
+   "shortDescription": "- Changed the default rule to serve **High**",
+   "titleVerb": "changed the default variation of",
+   "target": {
+    "_links": {},
+    "name": "API rate limit",
+    "resources": [
+     "proj/default:env/production:flag/api-rate-limit"
+    ]
+   },
+   "date": 1794654300000,
+   "member": {
+    "_links": {},
+    "_id": "m4kat00000000000000000004",
+    "email": "kat@example.com",
+    "firstName": "Katherine",
+    "lastName": "Johnson"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Katherine Johnson"
+   },
+   "title": "Katherine Johnson changed the default variation of API rate limit",
+   "parent": {
+    "_links": {},
+    "name": "Production",
+    "resource": "proj/default:env/production"
+   },
+   "__detail": {
+    "delta": [
+     {
+      "op": "replace",
+      "path": "/environments/production/on",
+      "value": true
+     }
+    ],
+    "previousVersion": {
+     "on": false
+    },
+    "currentVersion": {
+     "on": true
+    }
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al02"
+    }
+   },
+   "_id": "al02",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateRules",
+     "resource": "proj/default:env/production:flag/new-checkout"
+    },
+    {
+     "action": "updateFallthrough",
+     "resource": "proj/default:env/production:flag/new-checkout"
+    }
+   ],
+   "kind": "flag",
+   "name": "New checkout flow",
+   "description": "- Changed rollout to 10% / 90%\n- Disabled rule 1",
+   "shortDescription": "- Changed rollout to 10% / 90%",
+   "titleVerb": "updated the targeting rules of",
+   "target": {
+    "_links": {},
+    "name": "New checkout flow",
+    "resources": [
+     "proj/default:env/production:flag/new-checkout"
+    ]
+   },
+   "date": 1794652920000,
+   "member": {
+    "_links": {},
+    "_id": "m2grace000000000000000002",
+    "email": "grace@example.com",
+    "firstName": "Grace",
+    "lastName": "Hopper"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Grace Hopper"
+   },
+   "title": "Grace Hopper updated the targeting rules of New checkout flow",
+   "comment": "Ramping up",
+   "parent": {
+    "_links": {},
+    "name": "Production",
+    "resource": "proj/default:env/production"
+   },
+   "__detail": {
+    "delta": [
+     {
+      "op": "replace",
+      "path": "/environments/production/on",
+      "value": true
+     }
+    ],
+    "previousVersion": {
+     "on": false
+    },
+    "currentVersion": {
+     "on": true
+    }
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al03"
+    }
+   },
+   "_id": "al03",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateOn",
+     "resource": "proj/default:env/production:flag/dark-mode"
+    }
+   ],
+   "kind": "flag",
+   "name": "Dark mode",
+   "description": "- Turned targeting **on**",
+   "shortDescription": "- Turned targeting **on**",
+   "titleVerb": "turned on",
+   "target": {
+    "_links": {},
+    "name": "Dark mode",
+    "resources": [
+     "proj/default:env/production:flag/dark-mode"
+    ]
+   },
+   "date": 1794651300000,
+   "member": {
+    "_links": {},
+    "_id": "m1ada0000000000000000001",
+    "email": "ada@example.com",
+    "firstName": "Ada",
+    "lastName": "Lovelace"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Ada Lovelace"
+   },
+   "title": "Ada Lovelace turned on Dark mode",
+   "parent": {
+    "_links": {},
+    "name": "Production",
+    "resource": "proj/default:env/production"
+   },
+   "__detail": {
+    "delta": [
+     {
+      "op": "replace",
+      "path": "/environments/production/on",
+      "value": true
+     }
+    ],
+    "previousVersion": {
+     "on": false
+    },
+    "currentVersion": {
+     "on": true
+    }
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al04"
+    }
+   },
+   "_id": "al04",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateIncluded",
+     "resource": "proj/default:env/production:segment/beta-testers"
+    }
+   ],
+   "kind": "segment",
+   "name": "Beta testers",
+   "description": "- Added user-3 to included targets",
+   "shortDescription": "- Added user-3 to included targets",
+   "titleVerb": "updated",
+   "target": {
+    "_links": {},
+    "name": "Beta testers",
+    "resources": [
+     "proj/default:env/production:segment/beta-testers"
+    ]
+   },
+   "date": 1794649800000,
+   "member": {
+    "_links": {},
+    "_id": "m2grace000000000000000002",
+    "email": "grace@example.com",
+    "firstName": "Grace",
+    "lastName": "Hopper"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Grace Hopper"
+   },
+   "title": "Grace Hopper updated Beta testers",
+   "relatedFlag": {
+    "key": "dark-mode"
+   },
+   "__detail": {
+    "delta": null,
+    "previousVersion": null,
+    "currentVersion": null
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al05"
+    }
+   },
+   "_id": "al05",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateRules",
+     "resource": "proj/default:env/staging:flag/dark-mode"
+    }
+   ],
+   "kind": "flag",
+   "name": "Dark mode",
+   "description": "- Added rule",
+   "shortDescription": "- Added rule",
+   "titleVerb": "updated the targeting rules of",
+   "target": {
+    "_links": {},
+    "name": "Dark mode",
+    "resources": [
+     "proj/default:env/staging:flag/dark-mode"
+    ]
+   },
+   "date": 1794648600000,
+   "token": {
+    "_links": {},
+    "_id": "tok1",
+    "name": "ci-deployer",
+    "ending": "ab12",
+    "serviceToken": true
+   },
+   "subject": {
+    "_links": {},
+    "name": "ci-deployer"
+   },
+   "title": "ci-deployer updated the targeting rules of Dark mode",
+   "__detail": {
+    "delta": [
+     {
+      "op": "replace",
+      "path": "/environments/production/on",
+      "value": true
+     }
+    ],
+    "previousVersion": {
+     "on": false
+    },
+    "currentVersion": {
+     "on": true
+    }
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al06"
+    }
+   },
+   "_id": "al06",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateOn",
+     "resource": "proj/default:env/production:flag/new-checkout"
+    }
+   ],
+   "kind": "flag",
+   "name": "New checkout flow",
+   "description": "- Turned targeting **on**",
+   "shortDescription": "- Turned targeting **on**",
+   "titleVerb": "turned on",
+   "target": {
+    "_links": {},
+    "name": "New checkout flow",
+    "resources": [
+     "proj/default:env/production:flag/new-checkout"
+    ]
+   },
+   "date": 1794644100000,
+   "member": {
+    "_links": {},
+    "_id": "m2grace000000000000000002",
+    "email": "grace@example.com",
+    "firstName": "Grace",
+    "lastName": "Hopper"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Grace Hopper"
+   },
+   "title": "Grace Hopper turned on New checkout flow",
+   "__detail": {
+    "delta": [
+     {
+      "op": "replace",
+      "path": "/environments/production/on",
+      "value": true
+     }
+    ],
+    "previousVersion": {
+     "on": false
+    },
+    "currentVersion": {
+     "on": true
+    }
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al07"
+    }
+   },
+   "_id": "al07",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateRequireComments",
+     "resource": "proj/default:env/production"
+    }
+   ],
+   "kind": "environment",
+   "name": "Production",
+   "description": "- Required comments",
+   "shortDescription": "- Required comments",
+   "titleVerb": "updated",
+   "target": {
+    "_links": {},
+    "name": "Production",
+    "resources": [
+     "proj/default:env/production"
+    ]
+   },
+   "date": 1794585600000,
+   "member": {
+    "_links": {},
+    "_id": "m1ada0000000000000000001",
+    "email": "ada@example.com",
+    "firstName": "Ada",
+    "lastName": "Lovelace"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Ada Lovelace"
+   },
+   "title": "Ada Lovelace updated Production",
+   "__detail": {
+    "delta": null,
+    "previousVersion": null,
+    "currentVersion": null
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al08"
+    }
+   },
+   "_id": "al08",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateMemberRole",
+     "resource": "member/m2grace000000000000000002"
+    }
+   ],
+   "kind": "member",
+   "name": "grace@example.com",
+   "description": "- Role changed to **writer**",
+   "shortDescription": "- Role changed to **writer**",
+   "titleVerb": "updated the role of",
+   "target": {
+    "_links": {},
+    "name": "grace@example.com",
+    "resources": [
+     "member/m2grace000000000000000002"
+    ]
+   },
+   "date": 1794571200000,
+   "member": {
+    "_links": {},
+    "_id": "m4kat00000000000000000004",
+    "email": "kat@example.com",
+    "firstName": "Katherine",
+    "lastName": "Johnson"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Katherine Johnson"
+   },
+   "title": "Katherine Johnson updated the role of grace@example.com",
+   "__detail": {
+    "delta": null,
+    "previousVersion": null,
+    "currentVersion": null
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al09"
+    }
+   },
+   "_id": "al09",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updatePolicy",
+     "resource": "role/release-manager"
+    }
+   ],
+   "kind": "role",
+   "name": "Release manager",
+   "description": "- Added updateFallthrough",
+   "shortDescription": "- Added updateFallthrough",
+   "titleVerb": "updated",
+   "target": {
+    "_links": {},
+    "name": "Release manager",
+    "resources": [
+     "role/release-manager"
+    ]
+   },
+   "date": 1794477600000,
+   "member": {
+    "_links": {},
+    "_id": "m4kat00000000000000000004",
+    "email": "kat@example.com",
+    "firstName": "Katherine",
+    "lastName": "Johnson"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Katherine Johnson"
+   },
+   "title": "Katherine Johnson updated Release manager",
+   "__detail": {
+    "delta": null,
+    "previousVersion": null,
+    "currentVersion": null
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al10"
+    }
+   },
+   "_id": "al10",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateOn",
+     "resource": "proj/mobile:env/development:flag/onboarding-v2"
+    }
+   ],
+   "kind": "flag",
+   "name": "Onboarding v2",
+   "description": "- Turned targeting **on**",
+   "shortDescription": "- Turned targeting **on**",
+   "titleVerb": "turned on",
+   "target": {
+    "_links": {},
+    "name": "Onboarding v2",
+    "resources": [
+     "proj/mobile:env/development:flag/onboarding-v2"
+    ]
+   },
+   "date": 1794391200000,
+   "member": {
+    "_links": {},
+    "_id": "m2grace000000000000000002",
+    "email": "grace@example.com",
+    "firstName": "Grace",
+    "lastName": "Hopper"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Grace Hopper"
+   },
+   "title": "Grace Hopper turned on Onboarding v2",
+   "__detail": {
+    "delta": [
+     {
+      "op": "replace",
+      "path": "/environments/production/on",
+      "value": true
+     }
+    ],
+    "previousVersion": {
+     "on": false
+    },
+    "currentVersion": {
+     "on": true
+    }
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al11"
+    }
+   },
+   "_id": "al11",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "applyApprovalRequest",
+     "resource": "proj/default:env/production:flag/dark-mode"
+    }
+   ],
+   "kind": "flag",
+   "name": "Dark mode",
+   "description": "- Applied approval ap2",
+   "shortDescription": "- Applied approval ap2",
+   "titleVerb": "applied an approved change to",
+   "target": {
+    "_links": {},
+    "name": "Dark mode",
+    "resources": [
+     "proj/default:env/production:flag/dark-mode"
+    ]
+   },
+   "date": 1794308400000,
+   "member": {
+    "_links": {},
+    "_id": "m1ada0000000000000000001",
+    "email": "ada@example.com",
+    "firstName": "Ada",
+    "lastName": "Lovelace"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Ada Lovelace"
+   },
+   "title": "Ada Lovelace applied an approved change to Dark mode",
+   "__detail": {
+    "delta": [
+     {
+      "op": "replace",
+      "path": "/environments/production/on",
+      "value": true
+     }
+    ],
+    "previousVersion": {
+     "on": false
+    },
+    "currentVersion": {
+     "on": true
+    }
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al12"
+    }
+   },
+   "_id": "al12",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateTags",
+     "resource": "proj/mobile"
+    }
+   ],
+   "kind": "project",
+   "name": "Mobile App",
+   "description": "- Added tag android",
+   "shortDescription": "- Added tag android",
+   "titleVerb": "updated",
+   "target": {
+    "_links": {},
+    "name": "Mobile App",
+    "resources": [
+     "proj/mobile"
+    ]
+   },
+   "date": 1794214800000,
+   "member": {
+    "_links": {},
+    "_id": "m4kat00000000000000000004",
+    "email": "kat@example.com",
+    "firstName": "Katherine",
+    "lastName": "Johnson"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Katherine Johnson"
+   },
+   "title": "Katherine Johnson updated Mobile App",
+   "__detail": {
+    "delta": null,
+    "previousVersion": null,
+    "currentVersion": null
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al13"
+    }
+   },
+   "_id": "al13",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "createFlag",
+     "resource": "proj/default:env/production:flag/legacy-banner"
+    }
+   ],
+   "kind": "flag",
+   "name": "Legacy banner",
+   "description": "- Created flag",
+   "shortDescription": "- Created flag",
+   "titleVerb": "created",
+   "target": {
+    "_links": {},
+    "name": "Legacy banner",
+    "resources": [
+     "proj/default:env/production:flag/legacy-banner"
+    ]
+   },
+   "date": 1577836800000,
+   "member": {
+    "_links": {},
+    "_id": "m1ada0000000000000000001",
+    "email": "ada@example.com",
+    "firstName": "Ada",
+    "lastName": "Lovelace"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Ada Lovelace"
+   },
+   "title": "Ada Lovelace created Legacy banner",
+   "__detail": {
+    "delta": [
+     {
+      "op": "replace",
+      "path": "/environments/production/on",
+      "value": true
+     }
+    ],
+    "previousVersion": {
+     "on": false
+    },
+    "currentVersion": {
+     "on": true
+    }
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al14"
+    }
+   },
+   "_id": "al14",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateDescription",
+     "resource": "proj/default:env/production:flag/dark-mode"
+    }
+   ],
+   "kind": "flag",
+   "name": "Dark mode",
+   "description": "- Description edited",
+   "shortDescription": "- Description edited",
+   "titleVerb": "updated the description of",
+   "target": {
+    "_links": {},
+    "name": "Dark mode",
+    "resources": [
+     "proj/default:env/production:flag/dark-mode"
+    ]
+   },
+   "date_offset_minutes": 90,
+   "member": {
+    "_links": {},
+    "_id": "m1ada0000000000000000001",
+    "email": "ada@example.com",
+    "firstName": "Ada",
+    "lastName": "Lovelace"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Ada Lovelace"
+   },
+   "title": "Ada Lovelace updated the description of Dark mode",
+   "__detail": {
+    "delta": [
+     {
+      "op": "replace",
+      "path": "/environments/production/on",
+      "value": true
+     }
+    ],
+    "previousVersion": {
+     "on": false
+    },
+    "currentVersion": {
+     "on": true
+    }
+   }
+  },
+  {
+   "_links": {
+    "self": {
+     "href": "/api/v2/auditlog/al15"
+    }
+   },
+   "_id": "al15",
+   "_accountId": "acct1",
+   "accesses": [
+    {
+     "action": "updateRules",
+     "resource": "proj/default:env/production:segment/enterprise"
+    }
+   ],
+   "kind": "segment",
+   "name": "Enterprise customers",
+   "description": "- Added rule",
+   "shortDescription": "- Added rule",
+   "titleVerb": "updated",
+   "target": {
+    "_links": {},
+    "name": "Enterprise customers",
+    "resources": [
+     "proj/default:env/production:segment/enterprise"
+    ]
+   },
+   "date_offset_minutes": 180,
+   "member": {
+    "_links": {},
+    "_id": "m2grace000000000000000002",
+    "email": "grace@example.com",
+    "firstName": "Grace",
+    "lastName": "Hopper"
+   },
+   "subject": {
+    "_links": {},
+    "name": "Grace Hopper"
+   },
+   "title": "Grace Hopper updated Enterprise customers",
+   "__detail": {
+    "delta": null,
+    "previousVersion": null,
+    "currentVersion": null
+   }
+  }
+ ]
+}

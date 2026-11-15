@@ -15,16 +15,32 @@ import { field, type VgiDataType, type VgiField } from "@query-farm/vgi";
 export const CATALOG_NAME = "launchdarkly";
 export const VERSION = "0.1.0";
 
-export const SOURCE_URL = "https://github.com/your-org/vgi-launchdarkly";
+export const SOURCE_URL = "https://github.com/Query-farm/vgi-launchdarkly";
 
 /**
  * Categories group functions in docs and agent tools. Every object's
  * `vgi.category` must name one of these.
  */
 export const SCHEMA_CATEGORIES = [
-  { name: "text", title: "Text", description: "Functions that build or transform strings." },
-  { name: "generators", title: "Generators", description: "Table functions that generate rows." },
-  { name: "api", title: "REST APIs", description: "Table functions that read from HTTP APIs." },
+  { name: "structure", title: "Projects and Environments", description: "Projects and their environments." },
+  {
+    name: "flags",
+    title: "Feature Flags",
+    description: "Flags with per-environment targeting state, targeting rules and evaluation status.",
+  },
+  { name: "targeting", title: "Targeting", description: "Segments and context kinds used in targeting." },
+  {
+    name: "changes",
+    title: "Change Management",
+    description: "The audit log, approval requests, scheduled changes and release pipelines.",
+  },
+  { name: "access", title: "Access", description: "Members, teams, custom roles and their policy statements." },
+  { name: "experimentation", title: "Experimentation", description: "Experiments and metric definitions." },
+  {
+    name: "code",
+    title: "Code References",
+    description: "Repositories scanned for flag usage and the references found.",
+  },
 ] as const;
 
 export type Category = (typeof SCHEMA_CATEGORIES)[number]["name"];
@@ -61,83 +77,138 @@ export function column(name: string, type: VgiDataType, comment: string, nullabl
   return field(name, type, nullable, new Map([["comment", comment]]));
 }
 
+const SOURCES_MD =
+  "### Sources and references\n\n" +
+  "- [LaunchDarkly REST API](https://launchdarkly.com/docs/api) — the endpoints this worker reads\n" +
+  "- [Feature flags API](https://launchdarkly.com/docs/api/feature-flags/get-feature-flags) — `filter`, `sort`, `env`, `summary`\n" +
+  "- [Audit log API](https://launchdarkly.com/docs/api/audit-log/get-audit-log-entries) and [resource specifiers](https://launchdarkly.com/docs/home/account/roles/role-resources)\n" +
+  "- [Rate limiting](https://launchdarkly.com/docs/api#rate-limiting) and [API versioning](https://launchdarkly.com/docs/api#versioning)\n" +
+  "- [Access tokens](https://launchdarkly.com/docs/home/account/api) (personal and service tokens)";
+
+export const CATALOG_COMMENT =
+  "LaunchDarkly feature management as SQL: projects, environments, flags and their targeting, segments, the audit log, approvals, members and experiments, read-only from the LaunchDarkly REST API.";
+
 export const CATALOG_DOC_LLM =
-  "An example VGI worker generated from the Query.Farm starter template. It shows the three shapes " +
-  "most workers need: a vectorized scalar function with an overload, a deterministic table " +
-  "function with a named default argument, and a table function that pages through a REST API with " +
-  "retries and an optional bearer token taken from a DuckDB secret or an environment variable. " +
-  "Replace them with your own functions; keep the metadata complete so agents can discover and " +
-  "call them.";
+  "Read-only SQL access to a LaunchDarkly account through the REST API v2. Reach for it to answer: which flags " +
+  "are on in production and how they target (flags, flag_rules), which flags are stale or launched " +
+  "(flag_status, code_references), what changed and who changed it before an incident (audit_log: filter " +
+  "date, resource_kind, environment_key, resource_key — they push down as the after/before window and the " +
+  "resource specifier `spec`), what is waiting for approval or scheduled (approval_requests, scheduled_changes), " +
+  "who has access (members, teams, custom_roles, custom_role_statements), and how experiments and metrics are " +
+  "defined (experiments, metrics, release_pipelines). Every object needs a `launchdarkly` DuckDB secret with " +
+  "ACCESS_TOKEN (API access token or service token) and optional BASE_URL (EU: https://app.eu.launchdarkly.com, " +
+  "Federal: https://app.launchdarkly.us). Per-project and per-environment functions take project_key := / " +
+  "environment_key := named arguments or pushed WHERE project_key / environment_key = ... filters, and " +
+  "otherwise read every project and environment. Flag filters (tags, state, temporary, maintainer, client-side " +
+  "availability, creation date) push into LaunchDarkly's filter= parameter and are re-checked exactly. SDK keys " +
+  "and mobile keys are never returned. Upstream docs: https://launchdarkly.com/docs/api ; audit log " +
+  "https://launchdarkly.com/docs/api/audit-log/get-audit-log-entries ; rate limits " +
+  "https://launchdarkly.com/docs/api#rate-limiting .";
 
 export const CATALOG_DOC_MD =
-  "# VGI launchdarkly worker\n\n" +
-  "**An example [VGI](https://query.farm/vgi) worker that brings custom functions into DuckDB " +
-  "SQL.** It was generated from the Query.Farm starter template and is meant to be renamed and " +
-  "rewritten: every function here demonstrates one pattern you will reuse, from vectorized scalars " +
-  "and streaming table functions to a REST API reader that retries politely and reads a bearer " +
-  "token from a DuckDB secret or the environment.\n\n" +
-  "The worker speaks Apache Arrow to DuckDB over stdin/stdout, a Unix socket, or HTTP, so the " +
-  "same code runs as a local subprocess or a hosted service. See the " +
-  "[VGI documentation](https://query.farm/vgi/docs/) to learn more.";
+  "# LaunchDarkly\n\n" +
+  "Query a LaunchDarkly account from DuckDB: projects and environments, feature flags with their " +
+  "per-environment targeting, targeting rules, flag status, segments, context kinds, the audit log, approval " +
+  "requests, scheduled changes, members, teams, custom roles, experiments, metrics, release pipelines and code " +
+  "references. Read-only.\n\n" +
+  "Create a `launchdarkly` secret with an access token (`ACCESS_TOKEN`); set `BASE_URL` for the EU or Federal " +
+  "instance. Filters are translated into LaunchDarkly's `filter=`, audit-log `spec` and time window, so only " +
+  "matching rows cross the network; offset paging and rate-limit headers are handled for you.\n\n" +
+  SOURCES_MD;
 
 export const SCHEMA_DOC_LLM =
-  "The `main` schema holds the starter template's example functions, one per common worker " +
-  "pattern. `greet(name)` and `greet(name, style)` are vectorized scalars: use them inside a " +
-  "projection or predicate, one result per row; `style` is a constant that must be 'casual' or " +
-  "'formal'. `sequence_table(count, step := 1)` is a deterministic table function that returns " +
-  "`count` rows of `(n, squared)`; use it for demos, tests, and as a template for generators. " +
-  "`fetch_items(base_url, page_size := 100)` reads every item from a paginated JSON REST API as " +
-  "`(id, name, category, price)` rows, streaming one page per batch, retrying rate-limited " +
-  "requests, and authenticating with a `launchdarkly_api` DuckDB secret or the `LAUNCHDARKLY_API_TOKEN` " +
-  "environment variable. Scalars cannot take named arguments; table functions can.";
+  "LaunchDarkly REST API v2 collections as SQL. Account-wide collections are tables (projects, members, teams, " +
+  "custom_roles, custom_role_statements, approval_requests, code_ref_repositories); per-project and " +
+  "per-environment collections are table functions with project_key := / environment_key := (NULL = all) and " +
+  "optional named arguments. flags and flag_rules return one row per flag per environment. audit_log is " +
+  "time-windowed: filter on date (default lookback 30 days). All objects need a `launchdarkly` secret.";
 
 export const SCHEMA_DOC_MD =
   "## main\n\n" +
-  "The starter template's example functions, one per common worker pattern.\n\n" +
-  "- **Scalars** answer one question per row and slot into a projection or predicate.\n" +
-  "- **Table functions** return sets of rows, streamed to DuckDB in Arrow batches.\n" +
-  "- **REST readers** page through an HTTP API and authenticate with a DuckDB secret.";
+  "LaunchDarkly collections: projects and environments, flags and targeting, change management, access and " +
+  "experimentation.\n\n" +
+  "Account-wide collections are tables; per-project and per-environment collections are table functions that " +
+  "take the project and environment keys as named arguments or pushed filters and otherwise read them all.\n\n" +
+  "All objects need a `launchdarkly` secret; filters push down into LaunchDarkly's filter syntax.";
 
 export const AGENT_TEST_TASKS = [
-  { name: "formal_greeting", prompt: "Using the launchdarkly worker, greet the name 'Grace' formally." },
+  { name: "project_keys", prompt: "List the keys of all LaunchDarkly projects." },
+  { name: "prod_flags_on", prompt: "Which flags in the default project are switched on in production?" },
+  { name: "temporary_flag_count", prompt: "How many temporary flags does the default project have?" },
+  { name: "archived_flags", prompt: "Which flags in the default project are archived?" },
   {
-    name: "sum_of_squares",
+    name: "segment_targeting_flags",
+    prompt: "Which flags target the beta-testers segment in production in the default project?",
+  },
+  { name: "launched_flags", prompt: "Which flags in the default project have launched status in production?" },
+  { name: "big_segments", prompt: "Which segments in default/production are big (unbounded) segments?" },
+  { name: "critical_envs", prompt: "Which environments are marked critical, in which projects?" },
+  { name: "admins", prompt: "List the email addresses of members with the admin or owner role." },
+  { name: "pending_approvals", prompt: "How many approval requests are pending review?" },
+  {
+    name: "prod_changes_before_incident",
     prompt:
-      "Using the launchdarkly worker, what is the sum of the squared column for the first 10 rows " +
-      "of the sequence with the default step?",
+      "Who changed production flags in the default project between 2026-11-14 09:00 and 12:00 UTC, and what did they do?",
+  },
+  { name: "running_experiments", prompt: "Which experiments are currently running in the default project?" },
+  { name: "flag_code_refs", prompt: "In which files is the dark-mode flag referenced in code?" },
+  {
+    name: "repo_branches",
+    prompt: "Which code-reference repositories are scanned, and how many branches does each have?",
+  },
+  { name: "archived_context_kinds", prompt: "Which context kinds in the default project are archived?" },
+  { name: "deny_statements", prompt: "Which custom roles contain a deny statement?" },
+  { name: "unused_roles", prompt: "How many custom roles are assigned to at least one member?" },
+  { name: "numeric_metrics", prompt: "Which metrics in the default project track a numeric value, and in what unit?" },
+  {
+    name: "pipeline_phases",
+    prompt: "What are the phases of the standard release pipeline in the default project, in order?",
+  },
+  { name: "upcoming_changes", prompt: "Which flag changes are scheduled in the default project, and when?" },
+  { name: "largest_team", prompt: "Which LaunchDarkly team has the most members?" },
+];
+
+/** Bind-only probes: each binds the function and shows its columns without fetching (LIMIT 0). */
+export const EXECUTABLE_EXAMPLES = [
+  {
+    name: "flags_columns",
+    description: "The flags() result columns (binds only; create a launchdarkly secret and drop LIMIT 0 for rows)",
+    sql: "SELECT project_key, environment_key, key, targeting_on, rule_count FROM launchdarkly.main.flags() LIMIT 0",
   },
   {
-    name: "stepped_sequence",
-    prompt: "List the n values of a 4-row sequence that steps by 5, in ascending order.",
-  },
-  {
-    name: "items_per_category",
-    prompt:
-      "The items API is running at https://vgi-starter-api.query-farm.services/v1. How many items does it have in each category?",
+    name: "audit_log_columns",
+    description: "The audit_log() result columns (binds only; create a launchdarkly secret and drop LIMIT 0 for rows)",
+    sql: "SELECT date, actor, resource_kind, title FROM launchdarkly.main.audit_log() LIMIT 0",
   },
 ];
 
 export const CATALOG_TAGS: Record<string, string> = {
-  "vgi.title": "VGI Launchdarkly Worker",
-  "vgi.subtitle": "Example DuckDB functions to rename and replace: a scalar, a table function and a REST API reader.",
+  "vgi.title": "LaunchDarkly Feature Management",
+  "vgi.subtitle":
+    "LaunchDarkly flags, targeting, segments, audit log, approvals, members and experiments as SQL tables.",
   "vgi.doc_llm": CATALOG_DOC_LLM,
   "vgi.doc_md": CATALOG_DOC_MD,
   "vgi.source_url": SOURCE_URL,
   "vgi.icon_url": "https://query.farm/media-kit/products/vgi/vgi-logo.png",
   "vgi.license": "0BSD",
-  "vgi.author": "Query.Farm",
-  "vgi.copyright": "Copyright 2026 Query.Farm LLC",
-  "vgi.keywords": keywordsArray("vgi, duckdb, starter template, example worker, rest api, table function"),
+  "vgi.author": "Query Farm LLC",
+  "vgi.copyright": "Copyright 2026 Query Farm LLC - https://query.farm",
+  "vgi.keywords": keywordsArray(
+    "launchdarkly, feature flags, feature management, toggles, targeting, segments, audit log, approvals, experiments, release management",
+  ),
   "vgi.support_contact": `${SOURCE_URL}/issues`,
   "vgi.support_policy_url": `${SOURCE_URL}#support`,
   // Public analyst tasks for `vgi-lint simulate`; private graders live in vgi-agent-tests.yaml.
   "vgi.agent_test_tasks": JSON.stringify(AGENT_TEST_TASKS),
+  "vgi.executable_examples": JSON.stringify(EXECUTABLE_EXAMPLES),
 };
 
 export const SCHEMA_TAGS: Record<string, string> = {
-  "vgi.title": "Launchdarkly Functions",
-  domain: "examples",
-  "vgi.keywords": keywordsArray("greeting, sequence, generator, rest api, pagination"),
+  "vgi.title": "LaunchDarkly REST API",
+  domain: "feature-management",
+  "vgi.keywords": keywordsArray(
+    "launchdarkly, flags, environments, segments, audit log, approvals, members, experiments",
+  ),
   "vgi.doc_llm": SCHEMA_DOC_LLM,
   "vgi.doc_md": SCHEMA_DOC_MD,
   "vgi.categories": JSON.stringify(SCHEMA_CATEGORIES),

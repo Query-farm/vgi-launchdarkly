@@ -111,7 +111,7 @@ network errors retry with exponential backoff.
 **Prerequisites:** [Bun](https://bun.sh) 1.3+ (for a source checkout).
 
 ```bash
-git clone --branch v0.1.0 https://github.com/Query-farm/vgi-launchdarkly.git && cd vgi-launchdarkly
+git clone --branch v0.1.2 https://github.com/Query-farm/vgi-launchdarkly.git && cd vgi-launchdarkly
 bun install --frozen-lockfile
 ```
 

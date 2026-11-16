@@ -89,39 +89,40 @@ export const CATALOG_COMMENT =
   "LaunchDarkly feature management as SQL: projects, environments, flags and their targeting, segments, the audit log, approvals, members and experiments, read-only from the LaunchDarkly REST API.";
 
 export const CATALOG_DOC_LLM =
-  "Read-only SQL access to a LaunchDarkly account through the REST API v2. Reach for it to answer: which flags " +
-  "are on in production and how they target (flags, flag_rules), which flags are stale or launched " +
-  "(flag_status, code_references), what changed and who changed it before an incident (audit_log: filter " +
-  "date, resource_kind, environment_key, resource_key — they push down as the after/before window and the " +
-  "resource specifier `spec`), what is waiting for approval or scheduled (approval_requests, scheduled_changes), " +
-  "who has access (members, teams, custom_roles, custom_role_statements), and how experiments and metrics are " +
-  "defined (experiments, metrics, release_pipelines). Every object needs a `launchdarkly` DuckDB secret with " +
+  "Read-only SQL access to a LaunchDarkly account through the REST API v2. Reach for it to answer " +
+  "feature-management questions: which flags are on in production and how they target, which flags are " +
+  "stale or fully launched, what changed and who changed it before an incident (the audit log's date, " +
+  "resource kind, environment and resource filters push down as the after/before window and the resource " +
+  "specifier `spec`), what is waiting for approval or scheduled, who has access through which roles, and " +
+  "how experiments and metrics are defined. Every object needs a `launchdarkly` DuckDB secret with " +
   "ACCESS_TOKEN (API access token or service token) and optional BASE_URL (EU: https://app.eu.launchdarkly.com, " +
-  "Federal: https://app.launchdarkly.us). Per-project and per-environment functions take project_key := / " +
-  "environment_key := named arguments or pushed WHERE project_key / environment_key = ... filters, and " +
-  "otherwise read every project and environment. Flag filters (tags, state, temporary, maintainer, client-side " +
-  "availability, creation date) push into LaunchDarkly's filter= parameter and are re-checked exactly. SDK keys " +
-  "and mobile keys are never returned. Upstream docs: https://launchdarkly.com/docs/api ; audit log " +
+  "Federal: https://app.launchdarkly.us). Account-wide collections are tables; per-project and " +
+  "per-environment collections take project_key := / environment_key := named arguments or pushed WHERE " +
+  "project_key / environment_key = ... filters, and otherwise read every project and environment. Flag " +
+  "filters (tags, state, temporary, maintainer, client-side availability, creation date) push into " +
+  "LaunchDarkly's filter= parameter and are re-checked exactly. SDK keys and mobile keys are never " +
+  "returned. Upstream docs: https://launchdarkly.com/docs/api ; audit log " +
   "https://launchdarkly.com/docs/api/audit-log/get-audit-log-entries ; rate limits " +
   "https://launchdarkly.com/docs/api#rate-limiting .";
 
 export const CATALOG_DOC_MD =
   "# LaunchDarkly\n\n" +
-  "Query a LaunchDarkly account from DuckDB: projects and environments, feature flags with their " +
-  "per-environment targeting, targeting rules, flag status, segments, context kinds, the audit log, approval " +
-  "requests, scheduled changes, members, teams, custom roles, experiments, metrics, release pipelines and code " +
-  "references. Read-only.\n\n" +
+  "Query a LaunchDarkly account from DuckDB: feature flags and how they target each environment, " +
+  "change management (the audit trail, approvals and scheduled changes), access control and " +
+  "experimentation. Read-only.\n\n" +
   "Create a `launchdarkly` secret with an access token (`ACCESS_TOKEN`); set `BASE_URL` for the EU or Federal " +
   "instance. Filters are translated into LaunchDarkly's `filter=`, audit-log `spec` and time window, so only " +
   "matching rows cross the network; offset paging and rate-limit headers are handled for you.\n\n" +
   SOURCES_MD;
 
 export const SCHEMA_DOC_LLM =
-  "LaunchDarkly REST API v2 collections as SQL. Account-wide collections are tables (projects, members, teams, " +
-  "custom_roles, custom_role_statements, approval_requests, code_ref_repositories); per-project and " +
-  "per-environment collections are table functions with project_key := / environment_key := (NULL = all) and " +
-  "optional named arguments. flags and flag_rules return one row per flag per environment. audit_log is " +
+  "LaunchDarkly REST API v2 collections as SQL. Account-wide collections (projects, access control, " +
+  "approvals, code-reference repositories) are tables; per-project and per-environment collections are " +
+  "table functions with project_key := / environment_key := (NULL = all) and optional named arguments. " +
+  "Flag and targeting-rule functions return one row per flag per environment. The audit log is " +
   "time-windowed: filter on date (default lookback 30 days). All objects need a `launchdarkly` secret.";
+
+export const SCHEMA_COMMENT = "LaunchDarkly flags, targeting, change management, access and experiments, read-only.";
 
 export const SCHEMA_DOC_MD =
   "## main\n\n" +
